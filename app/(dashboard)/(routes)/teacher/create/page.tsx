@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import toast from "react-hot-toast";
 
 const formSchema = z.object({
   title: z.string().min(1, {
@@ -39,18 +40,19 @@ const CreatePage = () => {
     try {
       const response = await axios.post("/api/courses", values);
       router.push(`/teacher/courses/${response.data.id}`);
+      toast.success("Course created");
     } catch {
-      console.error("Something went wrong");
+      toast.error("Something went wrong");
     }
   };
 
   return (
     <div className="max-w-5xl mx-auto flex md:items-center md:justify-center h-full p-6">
       <div>
-        <h1 className="text-2xl ">
+        <h1 className="text-2xl font-semibold">
           Name your course
         </h1>
-        <p className="text-sm text-slate-600 ">
+        <p className="text-sm text-slate-600 mt-1">
           What would you like to name your course? Don't worry, you can change this later.
         </p>
         <Form {...form}>
