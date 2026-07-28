@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { ClerkProvider, Show, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
 import { Logo } from '@/components/logo'
 import { ToastProvider } from '@/components/providers/toaster-provider'
+import { ConfettiProvider } from '@/components/providers/confetti-provider'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -18,6 +19,7 @@ export default function RootLayout({
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col font-sans bg-white text-slate-900">
         <ClerkProvider>
+          <ConfettiProvider />
           <ToastProvider />
           <header className="flex justify-between items-center px-6 h-16 border-b border-gray-200 bg-white sticky top-0 z-50">
             <Logo />

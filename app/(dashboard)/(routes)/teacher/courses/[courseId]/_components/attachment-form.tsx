@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { Attachment, Course } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { FileUpload } from "@/components/file-upload";
 
 interface AttachmentFormProps {
   initialData: Course & { attachments: Attachment[] };
@@ -18,7 +18,7 @@ interface AttachmentFormProps {
 
 const formSchema = z.object({
   url: z.string().min(1),
-  name: z.string().min(1),
+  name: z.string().optional(),
 });
 
 export const AttachmentForm = ({
@@ -27,8 +27,6 @@ export const AttachmentForm = ({
 }: AttachmentFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [nameInput, setNameInput] = useState("");
-  const [urlInput, setUrlInput] = useState("");
 
   const router = useRouter();
 
@@ -37,10 +35,8 @@ export const AttachmentForm = ({
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       await axios.post(`/api/courses/${courseId}/attachments`, values);
-      toast.success("Course updated");
+      toast.success("Attachment added");
       toggleEdit();
-      setNameInput("");
-      setUrlInput("");
       router.refresh();
     } catch {
       toast.error("Something went wrong");
@@ -110,23 +106,18 @@ export const AttachmentForm = ({
         </>
       )}
       {isEditing && (
-        <div className="space-y-4 mt-4">
-          <Input
-            placeholder="File name (e.g. 'Course Syllabus PDF')"
-            value={nameInput}
-            onChange={(e) => setNameInput(e.target.value)}
+        <div className="mt-2">
+          <FileUpload
+            endpoint="courseAttachment"
+            onChange={(url, name) => {
+              if (url) {
+                onSubmit({ url: url, name: name });
+              }
+            }}
           />
-          <Input
-            placeholder="File URL (e.g. https://...)"
-            value={urlInput}
-            onChange={(e) => setUrlInput(e.target.value)}
-          />
-          <Button
-            onClick={() => onSubmit({ name: nameInput, url: urlInput })}
-            disabled={!nameInput || !urlInput}
-          >
-            Add attachment
-          </Button>
+          <div className="text-xs text-muted-foreground mt-4">
+            Add anything your students might need to complete the course.
+          </div>
         </div>
       )}
     </div>

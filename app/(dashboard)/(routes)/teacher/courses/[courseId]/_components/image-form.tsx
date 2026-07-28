@@ -10,7 +10,7 @@ import { Course } from "@prisma/client";
 import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { FileUpload } from "@/components/file-upload";
 
 interface ImageFormProps {
   initialData: Course;
@@ -28,7 +28,6 @@ export const ImageForm = ({
   courseId,
 }: ImageFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [urlInput, setUrlInput] = useState(initialData?.imageUrl || "");
   const router = useRouter();
 
   const toggleEdit = () => setIsEditing((current) => !current);
@@ -66,7 +65,7 @@ export const ImageForm = ({
       </div>
       {!isEditing && (
         !initialData.imageUrl ? (
-          <div className="flex items-center justify-center h-60 bg-slate-200 rounded-md">
+          <div className="flex items-center justify-center h-60 bg-slate-200 rounded-md mt-2">
             <ImageIcon className="h-10 w-10 text-slate-500" />
           </div>
         ) : (
@@ -81,18 +80,18 @@ export const ImageForm = ({
         )
       )}
       {isEditing && (
-        <div className="space-y-4 mt-4">
-          <Input
-            placeholder="Paste image URL (e.g. https://...)"
-            value={urlInput}
-            onChange={(e) => setUrlInput(e.target.value)}
+        <div className="mt-2">
+          <FileUpload
+            endpoint="courseImage"
+            onChange={(url) => {
+              if (url) {
+                onSubmit({ imageUrl: url });
+              }
+            }}
           />
-          <Button
-            onClick={() => onSubmit({ imageUrl: urlInput })}
-            disabled={!urlInput}
-          >
-            Save
-          </Button>
+          <div className="text-xs text-muted-foreground mt-4">
+            16:9 aspect ratio recommended
+          </div>
         </div>
       )}
     </div>

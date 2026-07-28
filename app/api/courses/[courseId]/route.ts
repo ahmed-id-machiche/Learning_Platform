@@ -1,7 +1,13 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import Mux from "@mux/mux-node";
 
 import { db } from "@/lib/db";
+
+const mux = new Mux({
+  tokenId: process.env.MUX_TOKEN_ID,
+  tokenSecret: process.env.MUX_TOKEN_SECRET,
+});
 
 export async function DELETE(
   req: Request,
@@ -18,12 +24,31 @@ export async function DELETE(
     const course = await db.course.findUnique({
       where: {
         id: courseId,
-        userId,
+        userId: userId,
+      },
+      include: {
+        chapters: {
+          include: {
+            muxData: true,
+          },
+        },
       },
     });
 
     if (!course) {
       return new NextResponse("Not found", { status: 404 });
+    }
+
+    if (process.env.MUX_TOKEN_ID && process.env.MUX_TOKEN_SECRET) {
+      for (const chapter of course.chapters) {
+        if (chapter.muxData?.assetId) {
+          try {
+            await mux.video.assets.delete(chapter.muxData.assetId);
+          } catch (e) {
+            console.log("[MUX_DELETE_WARNING]", e);
+          }
+        }
+      }
     }
 
     const deletedCourse = await db.course.delete({
