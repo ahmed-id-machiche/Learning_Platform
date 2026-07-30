@@ -1,0 +1,90 @@
+import { Category, Course } from "@prisma/client";
+import { db } from "@/lib/db";
+
+type CourseWithProgressWithCategory = Course & {
+  category: Category | null;
+  chapters: { id: string }[];
+  progress: number | null;
+};
+
+type GetCourses = {
+  userId: string;
+  title?: string;
+  categoryId?: string;
+};
+
+export const getCourses = async ({
+  userId,
+  title,
+  categoryId,
+}: GetCourses): Promise<CourseWithProgressWithCategory[]> => {
+  try {
+    const courses = await db.course.findMany({
+      where: {
+        isPublished: true,
+        title: {
+          contains: title,
+          mode: "insensitive",
+        },
+        categoryId,
+      },
+      include: {
+        category: true,
+        chapters: {
+          where: {
+            isPublished: true,
+          },
+          select: {
+            id: true,
+          },
+        },
+        purchases: {
+          where: {
+            userId,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    const coursesWithProgress: CourseWithProgressWithCategory[] = await Promise.all(
+      courses.map(async (course) => {
+        if (course.purchases.length === 0) {
+          return {
+            ...course,
+            progress: null,
+          };
+        }
+
+        const publishedChapterIds = course.chapters.map((chapter) => chapter.id);
+
+        const validCompletedChapters = await db.userProgress.count({
+          where: {
+            userId,
+            chapterId: {
+              in: publishedChapterIds,
+            },
+            isCompleted: true,
+          },
+        });
+
+        const progressPercentage =
+          publishedChapterIds.length === 0
+            ? 0
+            : (validCompletedChapters / publishedChapterIds.length) * 100;
+
+        return {
+          ...course,
+          progress: progressPercentage,
+        };
+      })
+    );
+
+    return coursesWithProgress;
+  } catch (error) {
+    console.log("[GET_COURSES]", error);
+    return [];
+  }
+};

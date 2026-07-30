@@ -73,6 +73,7 @@ export const ImageForm = ({
             <Image
               alt="Upload"
               fill
+              unoptimized
               className="object-cover rounded-md"
               src={initialData.imageUrl}
             />
