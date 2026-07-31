@@ -1,12 +1,12 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearchPostgres"]
 }
 
 datasource db {
   provider  = "postgresql"
 }
 
-// Example User model
 model Course {
   id String @id @default(uuid())  @map("_id")
   userId String
@@ -27,6 +27,7 @@ model Course {
   updatedAt DateTime @updatedAt
 
   @@index([categoryId])
+  @@index([title])
 }
 
 model Category {
