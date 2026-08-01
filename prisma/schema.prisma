@@ -11,10 +11,14 @@ model Course {
   id String @id @default(uuid())  @map("_id")
   userId String
   title String 
+  moduleCode String?
+  filiere String?
+  niveau String?
   description String? 
   imageUrl String? 
   price Float?
   isPublished Boolean @default(false)
+  isFree Boolean @default(true)
 
   categoryId String?
   category Category? @relation(fields: [categoryId], references: [id])
@@ -36,10 +40,19 @@ model Category {
   courses Course[]
 }
 
+enum AttachmentType {
+  COURSE_PDF
+  TP_SUJET
+  TP_CORRIGE
+  EFM_EXAM
+  OTHER
+}
+
 model Attachment {
   id String @id @default(uuid())  @map("_id")
   name String
   url String 
+  type AttachmentType @default(OTHER)
 
   courseId String
   course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
@@ -118,4 +131,23 @@ model StripeCustomer {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model TpSubmission {
+  id        String   @id @default(uuid()) @map("_id")
+  userId    String
+  courseId  String
+  chapterId String
+
+  fileName  String
+  fileUrl   String
+  comment   String?
+  grade     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([courseId])
+  @@index([chapterId])
+  @@unique([userId, chapterId])
 }

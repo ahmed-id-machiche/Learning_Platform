@@ -26,20 +26,28 @@ export const FileUpload = ({
       ? "Image (4MB)"
       : "File (PDF, Video, Image up to 100MB)";
 
+  const processFile = (file: File) => {
+    setSelectedFile(file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (typeof reader.result === "string") {
+        onChange(reader.result, file.name);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setSelectedFile(file);
-      const objectUrl = URL.createObjectURL(file);
-      onChange(objectUrl, file.name);
+      processFile(file);
     }
   };
 
   const handleUploadSelected = (e?: React.MouseEvent) => {
     e?.stopPropagation();
     if (selectedFile) {
-      const objectUrl = URL.createObjectURL(selectedFile);
-      onChange(objectUrl, selectedFile.name);
+      processFile(selectedFile);
     } else {
       fileInputRef.current?.click();
     }
@@ -60,9 +68,7 @@ export const FileUpload = ({
     setIsDragging(false);
     const file = e.dataTransfer.files?.[0];
     if (file) {
-      setSelectedFile(file);
-      const objectUrl = URL.createObjectURL(file);
-      onChange(objectUrl, file.name);
+      processFile(file);
     }
   };
 

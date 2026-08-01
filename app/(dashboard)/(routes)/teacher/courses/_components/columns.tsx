@@ -25,6 +25,28 @@ export const columns: ColumnDef<Course>[] = [
     },
   },
   {
+    accessorKey: "moduleCode",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Code Module
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const code = row.getValue("moduleCode") as string;
+      return (
+        <span className="font-mono text-xs font-semibold bg-emerald-100 text-emerald-900 px-2 py-0.5 rounded">
+          {code || "-"}
+        </span>
+      );
+    },
+  },
+  {
     accessorKey: "price",
     header: ({ column }) => {
       return (

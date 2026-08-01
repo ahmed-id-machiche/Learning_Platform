@@ -8,6 +8,8 @@ import { getCourses } from "@/actions/get-courses";
 import { Categories } from "./_components/categories";
 import { CoursesList } from "@/components/courses-list";
 
+import { Suspense } from "react";
+
 interface SearchPageProps {
   searchParams: Promise<{
     title?: string;
@@ -38,10 +40,22 @@ const SearchPage = async ({ searchParams }: SearchPageProps) => {
   return (
     <>
       <div className="px-6 pt-6 md:hidden md:mb-0 block">
-        <SearchInput />
+        <Suspense fallback={null}>
+          <SearchInput />
+        </Suspense>
       </div>
-      <div className="p-6 space-y-4">
-        <Categories items={categories} />
+      <div className="p-6 space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+            Catalogue des Formations & Modules OFPPT
+          </h1>
+          <p className="text-sm text-slate-500 mt-1">
+            Parcourez l'ensemble de vos modules par filières, recherchez par code (ex: M104) ou par mot-clé.
+          </p>
+        </div>
+        <Suspense fallback={null}>
+          <Categories items={categories} />
+        </Suspense>
         <CoursesList items={courses} />
       </div>
     </>

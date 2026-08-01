@@ -22,6 +22,9 @@ export const CoursesList = ({ items }: CoursesListProps) => {
             key={item.id}
             id={item.id}
             title={item.title}
+            moduleCode={item.moduleCode}
+            filiere={item.filiere}
+            isFree={item.isFree}
             imageUrl={item.imageUrl!}
             chaptersLength={item.chapters.length}
             price={item.price!}

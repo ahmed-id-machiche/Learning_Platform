@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import { Trash } from "lucide-react";
+import { Copy, Trash } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
@@ -49,6 +49,25 @@ export const Actions = ({ disabled, courseId, isPublished }: ActionsProps) => {
     }
   };
 
+  const onDuplicate = async () => {
+    const notification = toast.loading("Duplication du module en cours...");
+    try {
+      setIsLoading(true);
+      const response = await axios.post(`/api/courses/${courseId}/duplicate`);
+      toast.success("Module cloné avec succès!", {
+        id: notification,
+      });
+      router.push(`/teacher/courses/${response.data.id}`);
+      router.refresh();
+    } catch {
+      toast.error("Erreur lors de la duplication du module", {
+        id: notification,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const onDelete = async () => {
     const notification = toast.loading("Please wait...");
     try {
@@ -72,6 +91,16 @@ export const Actions = ({ disabled, courseId, isPublished }: ActionsProps) => {
 
   return (
     <div className="flex items-center gap-x-2">
+      <Button
+        onClick={onDuplicate}
+        disabled={isLoading}
+        variant="outline"
+        size="sm"
+        className="flex items-center gap-x-1.5 border-slate-300"
+      >
+        <Copy className="h-4 w-4 text-slate-600" />
+        <span>Cloner ce module</span>
+      </Button>
       <Button
         onClick={onClick}
         disabled={disabled || isLoading}

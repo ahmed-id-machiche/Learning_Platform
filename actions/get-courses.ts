@@ -24,9 +24,13 @@ export const getCourses = async ({
     const courses = await db.course.findMany({
       where: {
         isPublished: true,
-        title: {
-          contains: title,
-        },
+        ...(title ? {
+          OR: [
+            { title: { contains: title, mode: "insensitive" } },
+            { moduleCode: { contains: title, mode: "insensitive" } },
+            { filiere: { contains: title, mode: "insensitive" } },
+          ],
+        } : {}),
         categoryId,
       },
       include: {
@@ -52,12 +56,7 @@ export const getCourses = async ({
 
     const coursesWithProgress: CourseWithProgressWithCategory[] = await Promise.all(
       courses.map(async (course) => {
-        if (course.purchases.length === 0) {
-          return {
-            ...course,
-            progress: null,
-          };
-        }
+        const hasAccess = course.isFree || course.purchases.length > 0;
 
         const publishedChapterIds = course.chapters.map((chapter) => chapter.id);
 
@@ -70,6 +69,13 @@ export const getCourses = async ({
             isCompleted: true,
           },
         });
+
+        if (!hasAccess && validCompletedChapters === 0) {
+          return {
+            ...course,
+            progress: null,
+          };
+        }
 
         const progressPercentage =
           publishedChapterIds.length === 0

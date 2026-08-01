@@ -29,6 +29,7 @@ export const getChapter = async ({
       },
       select: {
         price: true,
+        isFree: true,
       },
     });
 
@@ -47,7 +48,9 @@ export const getChapter = async ({
     let attachments: Attachment[] = [];
     let nextChapter: Chapter | null = null;
 
-    if (purchase) {
+    const hasAccess = course.isFree || !!purchase;
+
+    if (hasAccess) {
       attachments = await db.attachment.findMany({
         where: {
           courseId: courseId,
@@ -55,7 +58,7 @@ export const getChapter = async ({
       });
     }
 
-    if (chapter.isFree || purchase) {
+    if (chapter.isFree || hasAccess) {
       muxData = await db.muxData.findUnique({
         where: {
           chapterId: chapterId,
@@ -85,6 +88,15 @@ export const getChapter = async ({
       },
     });
 
+    const submission = await db.tpSubmission.findUnique({
+      where: {
+        userId_chapterId: {
+          userId,
+          chapterId,
+        },
+      },
+    });
+
     return {
       chapter,
       course,
@@ -93,6 +105,7 @@ export const getChapter = async ({
       nextChapter,
       userProgress,
       purchase,
+      submission,
     };
   } catch (error) {
     console.log("[GET_CHAPTER]", error);
@@ -104,6 +117,7 @@ export const getChapter = async ({
       nextChapter: null,
       userProgress: null,
       purchase: null,
+      submission: null,
     };
   }
 };

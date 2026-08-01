@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { VideoPlayer } from "./_components/video-player";
 import { CourseEnrollButton } from "./_components/course-enroll-button";
 import { CourseProgressButton } from "./_components/course-progress-button";
+import { TpSubmissionForm } from "./_components/tp-submission-form";
 
 const ChapterIdPage = async ({
   params,
@@ -31,6 +32,7 @@ const ChapterIdPage = async ({
     nextChapter,
     userProgress,
     purchase,
+    submission,
   } = await getChapter({
     userId,
     chapterId,
@@ -41,8 +43,24 @@ const ChapterIdPage = async ({
     return redirect("/");
   }
 
-  const isLocked = !chapter.isFree && !purchase;
-  const completeOnEnd = !!purchase && !userProgress?.isCompleted;
+  const hasAccess = course.isFree || !!purchase;
+  const isLocked = !chapter.isFree && !hasAccess;
+  const completeOnEnd = hasAccess && !userProgress?.isCompleted;
+
+  const getTypeBadge = (type: string) => {
+    switch (type) {
+      case "COURSE_PDF":
+        return <span className="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded ml-auto">Cours PDF</span>;
+      case "TP_SUJET":
+        return <span className="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded ml-auto">TP Sujet</span>;
+      case "TP_CORRIGE":
+        return <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded ml-auto">TP Corrigé</span>;
+      case "EFM_EXAM":
+        return <span className="bg-purple-100 text-purple-800 text-[10px] font-bold px-2 py-0.5 rounded ml-auto">EFM Exam</span>;
+      default:
+        return <span className="bg-slate-200 text-slate-700 text-[10px] font-bold px-2 py-0.5 rounded ml-auto">Doc</span>;
+    }
+  };
 
   return (
     <div>
@@ -74,7 +92,7 @@ const ChapterIdPage = async ({
         <div>
           <div className="p-4 flex flex-col md:flex-row items-center justify-between">
             <h2 className="text-2xl font-semibold mb-2">{chapter.title}</h2>
-            {purchase ? (
+            {hasAccess ? (
               <CourseProgressButton
                 chapterId={chapterId}
                 courseId={courseId}
@@ -94,21 +112,33 @@ const ChapterIdPage = async ({
               <Preview value={chapter.description} />
             ) : null}
           </div>
+
+          {hasAccess && (
+            <div className="px-4 pb-4">
+              <TpSubmissionForm
+                courseId={courseId}
+                chapterId={chapterId}
+                initialSubmission={submission}
+              />
+            </div>
+          )}
+
           {!!attachments.length && (
             <>
               <Separator />
               <div className="p-4">
-                <div className="font-medium text-lg mb-2">Attachments</div>
+                <div className="font-medium text-lg mb-2">TPs, Exams & Documents OFPPT</div>
                 <div className="space-y-2">
                   {attachments.map((attachment) => (
                     <a
                       href={attachment.url}
                       target="_blank"
                       key={attachment.id}
-                      className="flex items-center p-3 w-full bg-sky-100 border text-sky-700 rounded-md hover:underline"
+                      className="flex items-center p-3 w-full bg-sky-100 border border-sky-200 text-sky-700 rounded-md hover:bg-sky-200/60 transition"
                     >
-                      <File className="h-4 w-4 mr-2" />
-                      <p className="line-clamp-1">{attachment.name}</p>
+                      <File className="h-4 w-4 mr-2 flex-shrink-0" />
+                      <p className="line-clamp-1 font-medium text-xs mr-2">{attachment.name}</p>
+                      {getTypeBadge(attachment.type)}
                     </a>
                   ))}
                 </div>

@@ -17,6 +17,10 @@ import { CategoryForm } from "./_components/category-form";
 import { PriceForm } from "./_components/price-form";
 import { AttachmentForm } from "./_components/attachment-form";
 import { ChaptersForm } from "./_components/chapters-form";
+import { ModuleCodeForm } from "./_components/module-code-form";
+import { FiliereForm } from "./_components/filiere-form";
+import { IsFreeForm } from "./_components/is-free-form";
+import { TpSubmissionsList } from "./_components/tp-submissions-list";
 import { Actions } from "./_components/actions";
 
 const CourseIdPage = async ({
@@ -56,15 +60,29 @@ const CourseIdPage = async ({
     },
   });
 
+  const submissions = await db.tpSubmission.findMany({
+    where: {
+      courseId: courseId,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
   if (!course) {
     return redirect("/");
   }
+
+  const chaptersMap = course.chapters.reduce((acc, chapter) => {
+    acc[chapter.id] = chapter.title;
+    return acc;
+  }, {} as Record<string, string>);
 
   const requiredFields = [
     course.title,
     course.description,
     course.imageUrl,
-    course.price,
+    course.price || course.isFree,
     course.categoryId,
     course.chapters.some((chapter) => chapter.isPublished),
   ];
@@ -84,9 +102,9 @@ const CourseIdPage = async ({
       <div className="p-6">
         <div className="flex items-center justify-between">
           <div className="flex flex-col gap-y-2">
-            <h1 className="text-2xl font-medium">Course setup</h1>
+            <h1 className="text-2xl font-medium">OFPPT Module Setup</h1>
             <span className="text-sm text-slate-700">
-              Complete all fields {completionText}
+              Complete required fields {completionText}
             </span>
           </div>
           <Actions
@@ -99,9 +117,11 @@ const CourseIdPage = async ({
           <div>
             <div className="flex items-center gap-x-2">
               <IconBadge icon={LayoutDashboard} />
-              <h2 className="text-xl">Customize your course</h2>
+              <h2 className="text-xl">Customize your OFPPT module</h2>
             </div>
+            <ModuleCodeForm initialData={course} courseId={course.id} />
             <TitleForm initialData={course} courseId={course.id} />
+            <FiliereForm initialData={course} courseId={course.id} />
             <DescriptionForm initialData={course} courseId={course.id} />
             <ImageForm initialData={course} courseId={course.id} />
             <CategoryForm
@@ -117,23 +137,33 @@ const CourseIdPage = async ({
             <div>
               <div className="flex items-center gap-x-2">
                 <IconBadge icon={ListChecks} />
-                <h2 className="text-xl">Course chapters</h2>
+                <h2 className="text-xl">Module chapters & video lectures</h2>
               </div>
               <ChaptersForm initialData={course} courseId={course.id} />
             </div>
             <div>
               <div className="flex items-center gap-x-2">
                 <IconBadge icon={CircleDollarSign} />
-                <h2 className="text-xl">Sell your course</h2>
+                <h2 className="text-xl">Access & Enrollment</h2>
               </div>
-              <PriceForm initialData={course} courseId={course.id} />
+              <IsFreeForm initialData={course} courseId={course.id} />
+              {!course.isFree && (
+                <PriceForm initialData={course} courseId={course.id} />
+              )}
             </div>
             <div>
               <div className="flex items-center gap-x-2">
                 <IconBadge icon={File} />
-                <h2 className="text-xl">Resources & Attachments</h2>
+                <h2 className="text-xl">TPs, Exams & PDF Documents</h2>
               </div>
               <AttachmentForm initialData={course} courseId={course.id} />
+            </div>
+            <div>
+              <TpSubmissionsList
+                courseId={course.id}
+                submissions={submissions}
+                chaptersMap={chaptersMap}
+              />
             </div>
           </div>
         </div>

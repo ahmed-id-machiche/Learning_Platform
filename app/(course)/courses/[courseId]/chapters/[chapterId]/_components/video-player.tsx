@@ -47,12 +47,12 @@ export const VideoPlayer = ({
 
         if (!nextChapterId) {
           confetti.onOpen();
-        }
-
-        toast.success("Progress updated");
-        router.refresh();
-
-        if (nextChapterId) {
+          toast.success("Course completed! Redirecting to course catalog...");
+          router.refresh();
+          router.push("/search");
+        } else {
+          toast.success("Progress updated");
+          router.refresh();
           router.push(`/courses/${courseId}/chapters/${nextChapterId}`);
         }
       }

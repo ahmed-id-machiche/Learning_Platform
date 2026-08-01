@@ -1,16 +1,15 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-
 import { db } from "@/lib/db";
 
-export async function POST(
+export async function PATCH(
   req: Request,
-  { params }: { params: Promise<{ courseId: string }> }
+  { params }: { params: Promise<{ courseId: string; submissionId: string }> }
 ) {
   try {
     const { userId } = await auth();
-    const { courseId } = await params;
-    const { url, name, type } = await req.json();
+    const { courseId, submissionId } = await params;
+    const { grade, comment } = await req.json();
 
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -27,18 +26,19 @@ export async function POST(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const attachment = await db.attachment.create({
+    const submission = await db.tpSubmission.update({
+      where: {
+        id: submissionId,
+      },
       data: {
-        url,
-        name: name || url.split("/").pop() || "Attachment",
-        type: type || "OTHER",
-        courseId: courseId,
+        grade,
+        comment,
       },
     });
 
-    return NextResponse.json(attachment);
+    return NextResponse.json(submission);
   } catch (error) {
-    console.log("COURSE_ID_ATTACHMENTS", error);
+    console.log("[TP_SUBMISSION_GRADE_PATCH]", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
 }
