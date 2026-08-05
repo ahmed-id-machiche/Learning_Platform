@@ -38,7 +38,6 @@ const CourseIdPage = async ({
   const course = await db.course.findUnique({
     where: {
       id: courseId,
-      userId,
     },
     include: {
       attachments: {

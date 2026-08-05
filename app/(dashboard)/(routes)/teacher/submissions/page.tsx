@@ -11,9 +11,6 @@ const SubmissionsPage = async () => {
   }
 
   const teacherCourses = await db.course.findMany({
-    where: {
-      userId,
-    },
     include: {
       chapters: {
         select: {
@@ -62,7 +59,7 @@ const SubmissionsPage = async () => {
           u.emailAddresses?.find((e) => e.id === u.primaryEmailAddressId)
             ?.emailAddress || u.emailAddresses[0]?.emailAddress || "";
         userMap[u.id] = {
-          name: fullName || u.username || (primaryEmail ? primaryEmail.split("@")[0] : "Stagiaire"),
+          name: fullName || u.username || (primaryEmail ? primaryEmail.split("@")[0] : "Étudiant"),
           email: primaryEmail,
         };
       });
@@ -75,7 +72,7 @@ const SubmissionsPage = async () => {
     ...sub,
     courseTitle: courseMap[sub.courseId] || "Module OFPPT",
     chapterTitle: chapterMap[sub.chapterId] || "Chapitre",
-    studentName: userMap[sub.userId]?.name || `Stagiaire (${sub.userId.substring(0, 6)})`,
+    studentName: userMap[sub.userId]?.name || `Étudiant (${sub.userId.substring(0, 6)})`,
     studentEmail: userMap[sub.userId]?.email || "",
   }));
 
@@ -83,10 +80,10 @@ const SubmissionsPage = async () => {
     <div className="p-6 space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-          Submissions des TPs & Devoirs Stagiaires
+          Rendus des TPs & Devoirs des Étudiants
         </h1>
         <p className="text-sm text-slate-500 mt-1">
-          Gérez l'ensemble des travaux pratiques soumis par vos stagiaires et attribuez les notes.
+          Gérez l'ensemble des travaux pratiques soumis par vos étudiants et attribuez les notes.
         </p>
       </div>
 

@@ -8,12 +8,14 @@ interface SidebarItemProps {
   icon: LucideIcon;
   label: string;
   href: string;
+  badgeCount?: number;
 }
 
 export const SidebarItem = ({
   icon: Icon,
   label,
   href,
+  badgeCount,
 }: SidebarItemProps) => {
   const pathname = usePathname();
   const router = useRouter();
@@ -44,7 +46,12 @@ export const SidebarItem = ({
             isActive && "text-sky-700"
           )}
         />
-        <span>{label}</span>
+        <span className="truncate">{label}</span>
+        {badgeCount !== undefined && badgeCount > 0 && (
+          <span className="ml-auto mr-6 bg-sky-600 text-white text-[11px] font-bold px-2 py-0.5 rounded-full shadow-xs shrink-0">
+            {badgeCount}
+          </span>
+        )}
       </div>
       <div
         className={cn(

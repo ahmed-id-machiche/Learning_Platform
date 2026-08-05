@@ -62,13 +62,13 @@ export const TpSubmissionsList = ({
       <div className="font-medium flex items-center justify-between mb-3">
         <div className="flex items-center gap-x-2">
           <FileCheck className="h-5 w-5 text-emerald-600" />
-          <span>Submissions des Stagiaires & Devoirs TP ({submissions.length})</span>
+          <span>Rendus des Étudiants & Devoirs TP ({submissions.length})</span>
         </div>
       </div>
 
       {submissions.length === 0 && (
         <p className="text-sm text-slate-500 italic">
-          Aucun TP soumis pour le moment par les stagiaires.
+          Aucun TP soumis pour le moment par les étudiants.
         </p>
       )}
 

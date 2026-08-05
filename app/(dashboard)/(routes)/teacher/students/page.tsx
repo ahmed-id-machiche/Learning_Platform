@@ -11,9 +11,6 @@ const StudentsPage = async () => {
   }
 
   const teacherCourses = await db.course.findMany({
-    where: {
-      userId,
-    },
     include: {
       chapters: {
         where: {
@@ -87,7 +84,7 @@ const StudentsPage = async () => {
           u.emailAddresses?.find((e) => e.id === u.primaryEmailAddressId)
             ?.emailAddress || u.emailAddresses[0]?.emailAddress || "";
         userMap[u.id] = {
-          name: fullName || u.username || (primaryEmail ? primaryEmail.split("@")[0] : "Stagiaire"),
+          name: fullName || u.username || (primaryEmail ? primaryEmail.split("@")[0] : "Étudiant"),
           email: primaryEmail,
         };
       });
@@ -98,7 +95,7 @@ const StudentsPage = async () => {
 
   const studentData = studentUserIds.map((studentId) => {
     const studentInfo = userMap[studentId] || {
-      name: `Stagiaire (${studentId.substring(0, 8)})`,
+      name: `Étudiant (${studentId.substring(0, 8)})`,
       email: "",
     };
     const studentProgresses = userProgresses.filter((up) => up.userId === studentId);
@@ -154,10 +151,10 @@ const StudentsPage = async () => {
     <div className="p-6 space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-          Suivi & Progression des Stagiaires
+          Suivi & Progression des Étudiants
         </h1>
         <p className="text-sm text-slate-500 mt-1">
-          Visualisez l'avancement de chaque stagiaire, leurs modules en cours, leurs modules terminés et leurs TPs soumis.
+          Visualisez l'avancement de chaque étudiant, leurs modules en cours, leurs modules terminés et leurs TPs soumis.
         </p>
       </div>
 

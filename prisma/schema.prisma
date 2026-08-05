@@ -26,6 +26,7 @@ model Course {
   chapters Chapter[]
   attachments Attachment[]
   purchases Purchase[]
+  announcements Announcement[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -151,3 +152,20 @@ model TpSubmission {
   @@index([chapterId])
   @@unique([userId, chapterId])
 }
+
+model Announcement {
+  id        String   @id @default(uuid()) @map("_id")
+  title     String
+  content   String
+  isPinned  Boolean  @default(false)
+  userId    String   // Teacher ID
+
+  courseId  String?
+  course    Course?  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([courseId])
+  @@index([userId])
+}

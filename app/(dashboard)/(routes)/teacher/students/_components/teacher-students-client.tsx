@@ -55,9 +55,9 @@ export const TeacherStudentsClient = ({
       {filteredStudents.length === 0 && (
         <div className="text-center py-12 bg-white rounded-xl border border-dashed border-slate-300">
           <Users className="h-10 w-10 text-slate-400 mx-auto mb-3" />
-          <h3 className="text-sm font-semibold text-slate-700">Aucun stagiaire inscrit pour le moment</h3>
+          <h3 className="text-sm font-semibold text-slate-700">Aucun étudiant inscrit pour le moment</h3>
           <p className="text-xs text-slate-500 mt-1">
-            Les stagiaires inscrits à vos modules OFPPT et leur avancement s'afficheront ici.
+            Les étudiants inscrits à vos modules et leur avancement s'afficheront ici.
           </p>
         </div>
       )}
@@ -77,7 +77,7 @@ export const TeacherStudentsClient = ({
                     </div>
                     <div>
                       <h3 className="font-bold text-sm text-slate-900">
-                        {student.studentName || "Stagiaire"}
+                        {student.studentName || "Étudiant"}
                       </h3>
                       <p className="text-xs text-slate-500">
                         {student.studentEmail || `ID: ${student.studentId.substring(0, 12)}...`}

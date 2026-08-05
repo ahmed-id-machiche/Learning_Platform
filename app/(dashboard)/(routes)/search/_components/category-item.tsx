@@ -1,15 +1,14 @@
 "use client";
 
 import qs from "query-string";
-import { IconType } from "react-icons";
+import { ElementType } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-
 import { cn } from "@/lib/utils";
 
 interface CategoryItemProps {
   label: string;
   value?: string;
-  icon?: IconType;
+  icon?: ElementType;
 }
 
 export const CategoryItem = ({
@@ -45,13 +44,22 @@ export const CategoryItem = ({
     <button
       onClick={onClick}
       className={cn(
-        "py-2 px-3 text-sm border border-slate-200 rounded-full flex items-center gap-x-1 hover:border-sky-700 transition",
-        isSelected && "border-sky-700 bg-sky-200/20 text-sky-800"
+        "relative py-2 px-3 text-sm font-medium rounded-full flex items-center gap-x-1.5 whitespace-nowrap transition-all duration-200 select-none cursor-pointer border shrink-0",
+        isSelected
+          ? "border-sky-700 bg-sky-200/20 text-sky-800 font-semibold shadow-xs"
+          : "border-slate-200 bg-white text-slate-600 hover:border-sky-700 hover:text-sky-700 hover:bg-sky-50/40"
       )}
       type="button"
     >
-      {Icon && <Icon size={20} />}
-      <div className="truncate">{label}</div>
+      {Icon && (
+        <span className={cn("p-0.5 rounded transition-transform", isSelected ? "text-sky-700" : "text-slate-500")}>
+          <Icon size={18} />
+        </span>
+      )}
+      <span>{label}</span>
+      {isSelected && (
+        <span className="h-1.5 w-1.5 rounded-full bg-sky-700 ml-0.5"></span>
+      )}
     </button>
   );
 };

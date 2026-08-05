@@ -18,7 +18,6 @@ export async function PATCH(
     const course = await db.course.findUnique({
       where: {
         id: courseId,
-        userId: userId,
       },
       include: {
         chapters: {
@@ -50,7 +49,6 @@ export async function PATCH(
     const publishedCourse = await db.course.update({
       where: {
         id: courseId,
-        userId: userId,
       },
       data: {
         isPublished: true,

@@ -57,7 +57,7 @@ export function DataTable<TData, TValue>({
     <div>
       <div className="flex items-center justify-between py-4">
         <Input
-          placeholder="Filter courses..."
+          placeholder="Rechercher un module par nom..."
           value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("title")?.setFilterValue(event.target.value)
@@ -65,20 +65,20 @@ export function DataTable<TData, TValue>({
           className="max-w-sm"
         />
         <Link href="/teacher/create">
-          <Button>
+          <Button className="bg-slate-900 hover:bg-slate-800 text-white font-medium">
             <PlusCircle className="h-4 w-4 mr-2" />
-            New course
+            Nouveau Module
           </Button>
         </Link>
       </div>
-      <div className="rounded-md border bg-white">
+      <div className="rounded-xl border border-slate-200 bg-white overflow-hidden shadow-xs">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-slate-50">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className="font-bold text-slate-700">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -112,9 +112,9 @@ export function DataTable<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
+                  className="h-24 text-center text-slate-500 font-medium"
                 >
-                  No results.
+                  Aucun module disponible.
                 </TableCell>
               </TableRow>
             )}
@@ -128,7 +128,7 @@ export function DataTable<TData, TValue>({
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
-          Previous
+          Précédent
         </Button>
         <Button
           variant="outline"
@@ -136,7 +136,7 @@ export function DataTable<TData, TValue>({
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
-          Next
+          Suivant
         </Button>
       </div>
     </div>

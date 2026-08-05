@@ -18,7 +18,7 @@ export const columns: ColumnDef<Course>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Title
+          Intitulé du Module
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
@@ -40,33 +40,31 @@ export const columns: ColumnDef<Course>[] = [
     cell: ({ row }) => {
       const code = row.getValue("moduleCode") as string;
       return (
-        <span className="font-mono text-xs font-semibold bg-emerald-100 text-emerald-900 px-2 py-0.5 rounded">
+        <span className="font-mono text-xs font-semibold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-md border border-emerald-200">
           {code || "-"}
         </span>
       );
     },
   },
   {
-    accessorKey: "price",
+    accessorKey: "isFree",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Price
+          Accès
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
     cell: ({ row }) => {
-      const price = parseFloat(row.getValue("price") || "0");
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(price);
-
-      return <div>{formatted}</div>;
+      return (
+        <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+          Accès Gratuit OFPPT
+        </span>
+      );
     },
   },
   {
@@ -77,7 +75,7 @@ export const columns: ColumnDef<Course>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Published
+          Statut
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
@@ -87,7 +85,7 @@ export const columns: ColumnDef<Course>[] = [
 
       return (
         <Badge className={cn("bg-slate-500 text-white", isPublished && "bg-sky-700 text-white")}>
-          {isPublished ? "Published" : "Draft"}
+          {isPublished ? "Publié" : "Brouillon"}
         </Badge>
       );
     },

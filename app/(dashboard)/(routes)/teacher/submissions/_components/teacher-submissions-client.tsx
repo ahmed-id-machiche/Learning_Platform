@@ -73,7 +73,7 @@ export const TeacherSubmissionsClient = ({
       <div className="relative max-w-md">
         <Search className="h-4 w-4 absolute top-3 left-3 text-slate-500" />
         <Input
-          placeholder="Filtrer par nom stagiaire, module, chapitre..."
+          placeholder="Filtrer par nom d'étudiant, module, chapitre..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="pl-9 text-xs h-9 bg-white"
@@ -85,7 +85,7 @@ export const TeacherSubmissionsClient = ({
           <FileCheck className="h-10 w-10 text-slate-400 mx-auto mb-3" />
           <h3 className="text-sm font-semibold text-slate-700">Aucun travail TP trouvé</h3>
           <p className="text-xs text-slate-500 mt-1">
-            Les travaux pratiques soumis par vos stagiaires apparaîtront ici.
+            Les travaux pratiques soumis par vos étudiants apparaîtront ici.
           </p>
         </div>
       )}
@@ -100,7 +100,7 @@ export const TeacherSubmissionsClient = ({
               <div className="flex-1 space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-xs font-bold text-slate-900 bg-emerald-100 border border-emerald-300 px-2.5 py-0.5 rounded">
-                    👤 {sub.studentName || "Stagiaire"}
+                    👤 {sub.studentName || "Étudiant"}
                   </span>
                   <span className="text-xs font-bold text-indigo-900 bg-indigo-50 px-2.5 py-0.5 rounded border border-indigo-100">
                     {sub.courseTitle}

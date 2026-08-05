@@ -10,15 +10,12 @@ async function main() {
   try {
     await db.category.createMany({
       data: [
-        { name: "Développement Digital" },
-        { name: "Infrastructure Digitale" },
         { name: "Gestion des Entreprises" },
-        { name: "Génie Civil" },
-        { name: "Électromécanique" },
-        { name: "Réseaux & Télécoms" },
-        { name: "Web Development" },
-        { name: "Computer Science" },
-        { name: "Engineering" },
+        { name: "Commerce Digital & Marketing" },
+        { name: "Comptabilité & Finance" },
+        { name: "Logistique & Transport" },
+        { name: "Techniques de Vente" },
+        { name: "Administration & RH" },
       ],
       skipDuplicates: true,
     });

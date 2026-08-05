@@ -49,11 +49,11 @@ const CreatePage = () => {
   return (
     <div className="max-w-5xl mx-auto flex md:items-center md:justify-center h-full p-6">
       <div>
-        <h1 className="text-2xl font-semibold">
-          Name your course
+        <h1 className="text-2xl font-bold text-slate-900">
+          Créer un nouveau module de formation OFPPT
         </h1>
         <p className="text-sm text-slate-600 mt-1">
-          What would you like to name your course? Don't worry, you can change this later.
+          Saisissez le titre de votre module. Vous pourrez ajouter le code module (ex: M102), la filière et les documents par la suite.
         </p>
         <Form {...form}>
           <form
@@ -65,18 +65,18 @@ const CreatePage = () => {
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Course title
+                  <FormLabel className="font-bold text-slate-700">
+                    Titre du module
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={isSubmitting}
-                      placeholder="e.g. 'Advanced Web Development'"
+                      placeholder="ex: 'M102 - Comptabilité Générale (Principes de Base)'"
                       {...field}
                     />
                   </FormControl>
                   <FormDescription>
-                    What will you teach in this course?
+                    Quel est l'intitulé officiel de ce module de formation ?
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -88,14 +88,15 @@ const CreatePage = () => {
                   type="button"
                   variant="ghost"
                 >
-                  Cancel
+                  Annuler
                 </Button>
               </Link>
               <Button
                 type="submit"
                 disabled={!isValid || isSubmitting}
+                className="bg-slate-900 hover:bg-slate-800 text-white font-medium"
               >
-                Continue
+                Continuer
               </Button>
             </div>
           </form>
