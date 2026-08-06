@@ -4,9 +4,6 @@ import {
   FileCheck,
   FileText,
   Download,
-  Search,
-  Filter,
-  Layers,
   BookOpen,
   Sparkles,
   Award,
@@ -27,6 +24,10 @@ interface ResourcesPageProps {
 export default async function ResourcesPage({ searchParams }: ResourcesPageProps) {
   const { userId } = await auth();
   const { title, type, categoryId } = await searchParams;
+
+  if (!userId) {
+    return redirect("/");
+  }
 
   // Fetch categories
   const categories = await db.category.findMany({

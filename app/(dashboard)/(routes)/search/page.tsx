@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { BookOpen, FileCheck, Layers, Sparkles, FileText, Search, Compass as CompassIcon } from "lucide-react";
+import { BookOpen, FileCheck, Layers, Sparkles, FileText } from "lucide-react";
 
 import { db } from "@/lib/db";
 import { SearchInput } from "@/components/search-input";
@@ -22,6 +22,10 @@ interface SearchPageProps {
 const SearchPage = async ({ searchParams }: SearchPageProps) => {
   const { userId } = await auth();
   const { title, categoryId } = await searchParams;
+
+  if (!userId) {
+    return redirect("/");
+  }
 
   const categories = await db.category.findMany({
     orderBy: {
@@ -192,4 +196,4 @@ const SearchPage = async ({ searchParams }: SearchPageProps) => {
   );
 };
 
-export default SearchPage;
+export default SearchPage;
