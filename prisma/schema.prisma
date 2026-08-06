@@ -27,6 +27,7 @@ model Course {
   attachments Attachment[]
   purchases Purchase[]
   announcements Announcement[]
+  quizzes Quiz[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -79,6 +80,7 @@ model Chapter {
   course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   userProgress UserProgress[]
+  quiz Quiz?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -167,5 +169,66 @@ model Announcement {
   updatedAt DateTime @updatedAt
 
   @@index([courseId])
+  @@index([userId])
+}
+
+model Quiz {
+  id          String   @id @default(uuid()) @map("_id")
+  title       String
+  description String?
+  isPublished Boolean  @default(false)
+
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  chapterId   String?  @unique
+  chapter     Chapter? @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  questions   QuizQuestion[]
+  submissions StudentQuizResult[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([courseId])
+}
+
+model QuizQuestion {
+  id          String       @id @default(uuid()) @map("_id")
+  question    String
+  explanation String?
+  position    Int
+
+  quizId      String
+  quiz        Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  options     QuizOption[]
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([quizId])
+}
+
+model QuizOption {
+  id         String       @id @default(uuid()) @map("_id")
+  text       String
+  isCorrect  Boolean      @default(false)
+
+  questionId String
+  question   QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+model StudentQuizResult {
+  id        String   @id @default(uuid()) @map("_id")
+  userId    String
+  score     Float
+  maxScore  Float
+
+  quizId    String
+  quiz      Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([quizId])
   @@index([userId])
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BarChart, Bell, Compass, FileCheck, Layout, List, Megaphone, Users } from "lucide-react";
+import { BarChart, Bell, Bot, Compass, FileCheck, Layout, List, Megaphone, Sparkles, Users } from "lucide-react";
 import { SidebarItem } from "./sidebar-item";
 import { usePathname } from "next/navigation";
 import axios from "axios";

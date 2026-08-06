@@ -39,19 +39,19 @@ export const CourseProgressButton = ({
 
       if (!isCompleted && !nextChapterId) {
         confetti.onOpen();
-        toast.success("Course completed! Redirecting to course catalog...");
+        toast.success("Module terminé ! Redirection vers le catalogue...");
         router.refresh();
         router.push("/search");
       } else if (!isCompleted && nextChapterId) {
-        toast.success("Progress updated");
+        toast.success("Progression enregistrée");
         router.refresh();
         router.push(`/courses/${courseId}/chapters/${nextChapterId}`);
       } else {
-        toast.success("Progress updated");
+        toast.success("Progression enregistrée");
         router.refresh();
       }
     } catch {
-      toast.error("Something went wrong");
+      toast.error("Une erreur est survenue");
     } finally {
       setIsLoading(false);
     }
@@ -65,9 +65,9 @@ export const CourseProgressButton = ({
       disabled={isLoading}
       type="button"
       variant={isCompleted ? "outline" : "success"}
-      className="w-full md:w-auto"
+      className="w-full md:w-auto font-medium"
     >
-      {isCompleted ? "Not completed" : "Mark as complete"}
+      {isCompleted ? "Marquer non terminé" : "Marquer comme terminé"}
       <Icon className="h-4 w-4 ml-2" />
     </Button>
   );

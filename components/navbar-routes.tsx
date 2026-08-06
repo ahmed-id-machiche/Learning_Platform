@@ -30,15 +30,15 @@ export const NavbarRoutes = () => {
      <div className="flex gap-x-2 ml-auto">
       {isTeacherPage || isPlayerPage ? (
         <Link href="/">
-          <Button size="sm" variant="ghost">
+          <Button size="sm" variant="ghost" className="text-slate-700 hover:text-slate-900 font-medium">
             <LogOut className="h-4 w-4 mr-2" />
-            Exit
+            Quitter
           </Button>
         </Link>
       ) : isTeacher(userId) ? (
         <Link href="/teacher/courses">
-          <Button size="sm" variant="ghost">
-            Teacher mode
+          <Button size="sm" variant="ghost" className="text-slate-700 hover:text-slate-900 font-medium">
+            Mode Formateur
           </Button>
         </Link>
       ) : null}

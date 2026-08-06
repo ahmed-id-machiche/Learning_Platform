@@ -7,6 +7,8 @@ import { CourseProgress } from "@/components/course-progress";
 
 import { CourseSidebarItem } from "./course-sidebar-item";
 
+import { Logo } from "@/components/logo";
+
 interface CourseSidebarProps {
   course: Course & {
     chapters: (Chapter & {
@@ -36,11 +38,23 @@ export const CourseSidebar = async ({
   });
 
   return (
-    <div className="h-full border-r flex flex-col overflow-y-auto shadow-sm">
-      <div className="p-8 flex flex-col border-b">
-        <h1 className="font-semibold">{course.title}</h1>
+    <div className="h-full border-r flex flex-col overflow-y-auto bg-white shadow-xs">
+      <div className="p-6 flex flex-col border-b space-y-4">
+        <div className="pb-2 border-b border-slate-100">
+          <Logo />
+        </div>
+        <div className="space-y-1.5">
+          {course.moduleCode && (
+            <span className="font-mono text-[11px] font-bold bg-emerald-100 text-emerald-900 px-2.5 py-0.5 rounded border border-emerald-200 inline-block">
+              {course.moduleCode}
+            </span>
+          )}
+          <h1 className="font-bold text-slate-900 text-sm leading-snug">
+            {course.title}
+          </h1>
+        </div>
         {purchase && (
-          <div className="mt-10">
+          <div className="pt-2">
             <CourseProgress variant="success" value={progressCount} />
           </div>
         )}
