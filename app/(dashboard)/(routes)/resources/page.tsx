@@ -14,6 +14,7 @@ import {
 
 import { db } from "@/lib/db";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/breadcrumb";
 
 interface ResourcesPageProps {
   searchParams: Promise<{
@@ -103,7 +104,15 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
   };
 
   return (
-    <div className="p-6 space-y-8 max-w-[1600px] mx-auto pb-12">
+    <div className="p-6 space-y-6 max-w-[1600px] mx-auto pb-12">
+      {/* Fil d'ariane / Breadcrumbs */}
+      <Breadcrumbs
+        items={[
+          { label: "EFMs & TPs Corrigés", icon: FileCheck },
+          ...(type ? [{ label: type === "EFM_EXAM" ? "EFMs Corrigés" : type === "TP_CORRIGE" ? "TPs Corrigés" : "Documents" }] : []),
+        ]}
+      />
+
       {/* Hero Header */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-700 via-indigo-700 to-violet-800 p-8 md:p-10 text-white shadow-xl">
         <div className="absolute top-0 right-0 -mt-10 -mr-10 w-80 h-80 rounded-full bg-white/10 blur-2xl pointer-events-none" />

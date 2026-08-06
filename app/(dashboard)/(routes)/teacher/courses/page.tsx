@@ -5,6 +5,8 @@ import { db } from "@/lib/db";
 
 import { DataTable } from "./_components/data-table";
 import { columns } from "./_components/columns";
+import { Breadcrumbs } from "@/components/breadcrumb";
+import { List } from "lucide-react";
 
 const CoursesPage = async () => {
   const { userId } = await auth();
@@ -20,7 +22,13 @@ const CoursesPage = async () => {
   });
 
   return (
-    <div className="p-6">
+    <div className="p-6 space-y-4">
+      <Breadcrumbs
+        items={[
+          { label: "Espace Formateur", href: "/teacher/courses" },
+          { label: "Modules de Formation", icon: List },
+        ]}
+      />
       <DataTable columns={columns} data={courses} />
     </div>
   );

@@ -10,6 +10,7 @@ import {
 import { db } from "@/lib/db";
 import { Banner } from "@/components/banner";
 import { IconBadge } from "@/components/icon-badge";
+import { Breadcrumbs } from "@/components/breadcrumb";
 import { TitleForm } from "./_components/title-form";
 import { DescriptionForm } from "./_components/description-form";
 import { ImageForm } from "./_components/image-form";
@@ -96,14 +97,20 @@ const CourseIdPage = async ({
   return (
     <>
       {!course.isPublished && (
-        <Banner label="This course is unpublished. It will not be visible to the students." />
+        <Banner label="Ce module n'est pas encore publié. Il ne sera pas visible par les étudiants." />
       )}
-      <div className="p-6">
+      <div className="p-6 space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: "Modules de Formation", href: "/teacher/courses" },
+            { label: course.moduleCode ? `[${course.moduleCode}] ${course.title}` : course.title },
+          ]}
+        />
         <div className="flex items-center justify-between">
           <div className="flex flex-col gap-y-2">
-            <h1 className="text-2xl font-medium">OFPPT Module Setup</h1>
-            <span className="text-sm text-slate-700">
-              Complete required fields {completionText}
+            <h1 className="text-2xl font-bold text-slate-900">Configuration du Module OFPPT</h1>
+            <span className="text-sm text-slate-600 font-medium">
+              Champs obligatoires remplis : {completionText}
             </span>
           </div>
           <Actions
@@ -112,7 +119,7 @@ const CourseIdPage = async ({
             isPublished={course.isPublished}
           />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           <div>
             <div className="flex items-center gap-x-2">
               <IconBadge icon={LayoutDashboard} />

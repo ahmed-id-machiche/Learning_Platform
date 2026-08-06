@@ -34,28 +34,31 @@ export const SidebarItem = ({
       onClick={onClick}
       type="button"
       className={cn(
-        "flex items-center gap-x-2 text-slate-500 text-sm font-[500] pl-6 transition-all hover:text-slate-600 hover:bg-slate-300/20 relative w-full",
-        isActive && "text-sky-700 bg-sky-200/20 hover:bg-sky-200/20 hover:text-sky-700"
+        "flex items-center gap-x-2 text-slate-500 text-sm font-medium pl-6 transition-all duration-200 hover:text-slate-700 hover:bg-slate-100 relative w-full group",
+        isActive && "text-sky-700 bg-sky-50 font-semibold hover:bg-sky-50 hover:text-sky-700"
       )}
     >
-      <div className="flex items-center gap-x-2 py-4 w-full">
+      <div className="flex items-center gap-x-2.5 py-4 w-full">
         <Icon
-          size={22}
+          size={21}
           className={cn(
-            "text-slate-500",
-            isActive && "text-sky-700"
+            "text-slate-400 transition-colors group-hover:text-slate-600",
+            isActive && "text-sky-700 group-hover:text-sky-700"
           )}
         />
         <span className="truncate">{label}</span>
         {badgeCount !== undefined && badgeCount > 0 && (
-          <span className="ml-auto mr-6 bg-sky-600 text-white text-[11px] font-bold px-2 py-0.5 rounded-full shadow-xs shrink-0">
-            {badgeCount}
+          <span className="ml-auto mr-5 relative flex items-center justify-center">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75" />
+            <span className="relative bg-sky-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs shrink-0">
+              {badgeCount}
+            </span>
           </span>
         )}
       </div>
       <div
         className={cn(
-          "ml-auto opacity-0 border-2 border-sky-700 h-full transition-all absolute right-0 top-0 bottom-0",
+          "ml-auto opacity-0 border-2 border-sky-700 h-full transition-all duration-200 absolute right-0 top-0 bottom-0 rounded-l-md",
           isActive && "opacity-100"
         )}
       />

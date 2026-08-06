@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { BookOpen, FileCheck, Layers, Sparkles, FileText, Search } from "lucide-react";
+import { BookOpen, FileCheck, Layers, Sparkles, FileText, Search, Compass as CompassIcon } from "lucide-react";
 
 import { db } from "@/lib/db";
 import { SearchInput } from "@/components/search-input";
@@ -8,6 +8,7 @@ import { getCourses } from "@/actions/get-courses";
 
 import { Categories } from "./_components/categories";
 import { CoursesList } from "@/components/courses-list";
+import { Breadcrumbs } from "@/components/breadcrumb";
 
 import { Suspense } from "react";
 
@@ -72,7 +73,15 @@ const SearchPage = async ({ searchParams }: SearchPageProps) => {
         </Suspense>
       </div>
 
-      <div className="p-6 space-y-8 max-w-[1600px] mx-auto">
+      <div className="p-6 space-y-6 max-w-[1600px] mx-auto">
+        {/* Fil d'ariane / Breadcrumbs */}
+        <Breadcrumbs
+          items={[
+            { label: "Catalogue & Modules", icon: CompassIcon },
+            ...(selectedCategory ? [{ label: selectedCategory.name }] : []),
+          ]}
+        />
+
         {/* Platform-Aligned Hero Header */}
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-700 via-indigo-700 to-violet-800 p-8 md:p-10 text-white shadow-xl">
           {/* Subtle ambient lighting glows */}
