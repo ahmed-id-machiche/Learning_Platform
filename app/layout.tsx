@@ -21,22 +21,6 @@ export default function RootLayout({
         <ClerkProvider>
           <ConfettiProvider />
           <ToastProvider />
-          <header className="flex justify-between items-center px-6 h-16 border-b border-gray-200 bg-white sticky top-0 z-50">
-            <Logo />
-            <div className="flex items-center gap-4">
-              <Show when="signed-out">
-                <SignInButton />
-                <SignUpButton>
-                  <button className="bg-[#6c47ff] text-white rounded-full font-medium text-sm h-10 px-5 cursor-pointer">
-                    Sign Up
-                  </button>
-                </SignUpButton>
-              </Show>
-              <Show when="signed-in">
-                <UserButton />
-              </Show>
-            </div>
-          </header>
           {children}
         </ClerkProvider>
       </body>

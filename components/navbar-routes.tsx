@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { LogOut, Search } from "lucide-react";
+import { LogIn, LogOut, Search } from "lucide-react";
 import Link from "next/link";
 import { UserButton, useAuth } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
@@ -42,8 +42,18 @@ export const NavbarRoutes = () => {
           </Button>
         </Link>
       ) : null}
-      <UserButton />
-     </div>
-  </>
+
+        {!userId ? (
+          <Link href="/sign-in">
+            <Button size="sm" className="bg-sky-700 hover:bg-sky-800 text-white font-bold px-4 rounded-xl shadow-xs flex items-center gap-1">
+              <LogIn className="h-4 w-4" />
+              <span>Se Connecter</span>
+            </Button>
+          </Link>
+        ) : (
+          <UserButton />
+        )}
+      </div>
+    </>
   );
 };
