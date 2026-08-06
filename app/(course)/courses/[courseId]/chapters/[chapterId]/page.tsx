@@ -6,6 +6,7 @@ import { getChapter } from "@/actions/get-chapter";
 import { Banner } from "@/components/banner";
 import { Preview } from "@/components/preview";
 import { Separator } from "@/components/ui/separator";
+import { PdfDownloadButton } from "@/components/pdf-download-button";
 
 import { VideoPlayer } from "./_components/video-player";
 import { CourseEnrollButton } from "./_components/course-enroll-button";
@@ -130,16 +131,13 @@ const ChapterIdPage = async ({
                 <div className="font-medium text-lg mb-2">TPs, Exams & Documents OFPPT</div>
                 <div className="space-y-2">
                   {attachments.map((attachment) => (
-                    <a
-                      href={attachment.url}
-                      target="_blank"
+                    <PdfDownloadButton
                       key={attachment.id}
-                      className="flex items-center p-3 w-full bg-sky-100 border border-sky-200 text-sky-700 rounded-md hover:bg-sky-200/60 transition"
-                    >
-                      <File className="h-4 w-4 mr-2 flex-shrink-0" />
-                      <p className="line-clamp-1 font-medium text-xs mr-2">{attachment.name}</p>
-                      {getTypeBadge(attachment.type)}
-                    </a>
+                      url={attachment.url}
+                      name={attachment.name}
+                      variant="list"
+                      badge={getTypeBadge(attachment.type)}
+                    />
                   ))}
                 </div>
               </div>

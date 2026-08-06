@@ -12,6 +12,7 @@ import {
 import { db } from "@/lib/db";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/breadcrumb";
+import { PdfDownloadButton } from "@/components/pdf-download-button";
 
 interface ResourcesPageProps {
   searchParams: Promise<{
@@ -259,15 +260,11 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
                     <span className="text-[11px] text-slate-400 font-medium">
                       PDF Téléchargeable
                     </span>
-                    <a
-                      href={attachment.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-sky-700 bg-sky-50 group-hover:bg-sky-700 group-hover:text-white px-3 py-1.5 rounded-lg transition-all shadow-xs"
-                    >
-                      <Download className="h-3.5 w-3.5" />
-                      <span>Télécharger PDF</span>
-                    </a>
+                    <PdfDownloadButton
+                      url={attachment.url}
+                      name={attachment.name}
+                      variant="card"
+                    />
                   </div>
                 </div>
               );
