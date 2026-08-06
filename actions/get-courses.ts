@@ -10,7 +10,7 @@ type CourseWithProgressWithCategory = Course & {
 };
 
 type GetCourses = {
-  userId: string;
+  userId?: string | null;
   title?: string;
   categoryId?: string;
 };
@@ -45,7 +45,7 @@ export const getCourses = async ({
         },
         purchases: {
           where: {
-            userId,
+            userId: userId || "",
           },
         },
       },
@@ -60,15 +60,17 @@ export const getCourses = async ({
 
         const publishedChapterIds = course.chapters.map((chapter) => chapter.id);
 
-        const validCompletedChapters = await db.userProgress.count({
-          where: {
-            userId,
-            chapterId: {
-              in: publishedChapterIds,
-            },
-            isCompleted: true,
-          },
-        });
+        const validCompletedChapters = userId
+          ? await db.userProgress.count({
+              where: {
+                userId,
+                chapterId: {
+                  in: publishedChapterIds,
+                },
+                isCompleted: true,
+              },
+            })
+          : 0;
 
         if (!hasAccess && validCompletedChapters === 0) {
           return {
