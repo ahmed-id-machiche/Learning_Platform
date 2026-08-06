@@ -1,18 +1,12 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 
-const isPublicRoute = createRouteMatcher([
-  '/',
-  '/search(.*)',
-  '/courses(.*)',
-  '/resources(.*)',
-  '/announcements(.*)',
-  '/sign-in(.*)',
-  '/sign-up(.*)',
-  '/api/webhook(.*)',
+// Only protect teacher workspace and admin routes; all other pages remain public
+const isProtectedRoute = createRouteMatcher([
+  '/teacher(.*)',
 ])
 
 export default clerkMiddleware(async (auth, req) => {
-  if (!isPublicRoute(req)) {
+  if (isProtectedRoute(req)) {
     await auth.protect()
   }
 })
