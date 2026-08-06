@@ -1,12 +1,21 @@
 "use client";
 
-import { ChevronRight, Home } from "lucide-react";
+import { ChevronRight, Home, Compass, FileCheck, List, BookOpen } from "lucide-react";
 import Link from "next/link";
+
+export type BreadcrumbIconType = "compass" | "fileCheck" | "list" | "bookOpen";
+
+const ICON_MAP: Record<BreadcrumbIconType, React.ComponentType<{ className?: string }>> = {
+  compass: Compass,
+  fileCheck: FileCheck,
+  list: List,
+  bookOpen: BookOpen,
+};
 
 export interface BreadcrumbItem {
   label: string;
   href?: string;
-  icon?: React.ComponentType<{ className?: string }>;
+  iconName?: BreadcrumbIconType;
 }
 
 interface BreadcrumbsProps {
@@ -25,7 +34,7 @@ export const Breadcrumbs = ({ items }: BreadcrumbsProps) => {
       </Link>
       {items.map((item, index) => {
         const isLast = index === items.length - 1;
-        const Icon = item.icon;
+        const Icon = item.iconName ? ICON_MAP[item.iconName] : null;
 
         return (
           <div key={index} className="flex items-center space-x-1.5">

@@ -77,7 +77,7 @@ const SearchPage = async ({ searchParams }: SearchPageProps) => {
         {/* Fil d'ariane / Breadcrumbs */}
         <Breadcrumbs
           items={[
-            { label: "Catalogue & Modules", icon: CompassIcon },
+            { label: "Catalogue & Modules", iconName: "compass" },
             ...(selectedCategory ? [{ label: selectedCategory.name }] : []),
           ]}
         />

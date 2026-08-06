@@ -26,7 +26,7 @@ const CoursesPage = async () => {
       <Breadcrumbs
         items={[
           { label: "Espace Formateur", href: "/teacher/courses" },
-          { label: "Modules de Formation", icon: List },
+          { label: "Modules de Formation", iconName: "list" },
         ]}
       />
       <DataTable columns={columns} data={courses} />

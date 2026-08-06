@@ -108,7 +108,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
       {/* Fil d'ariane / Breadcrumbs */}
       <Breadcrumbs
         items={[
-          { label: "EFMs & TPs Corrigés", icon: FileCheck },
+          { label: "EFMs & TPs Corrigés", iconName: "fileCheck" },
           ...(type ? [{ label: type === "EFM_EXAM" ? "EFMs Corrigés" : type === "TP_CORRIGE" ? "TPs Corrigés" : "Documents" }] : []),
         ]}
       />
