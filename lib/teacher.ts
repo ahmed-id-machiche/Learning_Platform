@@ -1,5 +1,6 @@
 export const isTeacher = (userId?: string | null) => {
   if (!userId) return false;
-  // Allow all logged-in users/teachers to access Teacher Mode
-  return true;
+
+  const teacherIds = process.env.NEXT_PUBLIC_TEACHER_ID?.split(",") || [];
+  return teacherIds.includes(userId);
 };
