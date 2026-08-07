@@ -12,6 +12,13 @@ const nextConfig: NextConfig = {
         hostname: "**",
       },
     ],
+  async rewrites() {
+    return [
+      {
+        source: "/__clerk/:path*",
+        destination: "https://artistic-pika-3.clerk.accounts.dev/__clerk/:path*",
+      },
+    ];
   },
 };
 
