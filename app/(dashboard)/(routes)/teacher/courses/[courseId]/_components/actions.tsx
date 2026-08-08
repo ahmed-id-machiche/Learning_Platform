@@ -22,18 +22,18 @@ export const Actions = ({ disabled, courseId, isPublished }: ActionsProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const onClick = async () => {
-    const notification = toast.loading("Please wait...");
+    const notification = toast.loading("Veuillez patienter...");
     try {
       setIsLoading(true);
 
       if (isPublished) {
         await axios.patch(`/api/courses/${courseId}/unpublish`);
-        toast.success("Course unpublished", {
+        toast.success("Module dépublié", {
           id: notification,
         });
       } else {
         await axios.patch(`/api/courses/${courseId}/publish`);
-        toast.success("Course published", {
+        toast.success("Module publié avec succès !", {
           id: notification,
         });
         confetti.onOpen();
@@ -41,7 +41,7 @@ export const Actions = ({ disabled, courseId, isPublished }: ActionsProps) => {
 
       router.refresh();
     } catch {
-      toast.error("Something went wrong", {
+      toast.error("Une erreur est survenue lors de la publication", {
         id: notification,
       });
     } finally {
@@ -54,7 +54,7 @@ export const Actions = ({ disabled, courseId, isPublished }: ActionsProps) => {
     try {
       setIsLoading(true);
       const response = await axios.post(`/api/courses/${courseId}/duplicate`);
-      toast.success("Module cloné avec succès!", {
+      toast.success("Module cloné avec succès !", {
         id: notification,
       });
       router.push(`/teacher/courses/${response.data.id}`);
@@ -69,19 +69,19 @@ export const Actions = ({ disabled, courseId, isPublished }: ActionsProps) => {
   };
 
   const onDelete = async () => {
-    const notification = toast.loading("Please wait...");
+    const notification = toast.loading("Veuillez patienter...");
     try {
       setIsLoading(true);
 
       await axios.delete(`/api/courses/${courseId}`);
 
-      toast.success("Course deleted", {
+      toast.success("Module supprimé avec succès", {
         id: notification,
       });
       router.refresh();
       router.push(`/teacher/courses`);
     } catch {
-      toast.error("Something went wrong", {
+      toast.error("Une erreur est survenue", {
         id: notification,
       });
     } finally {
@@ -107,10 +107,10 @@ export const Actions = ({ disabled, courseId, isPublished }: ActionsProps) => {
         variant="outline"
         size="sm"
       >
-        {isPublished ? "Unpublish" : "Publish"}
+        {isPublished ? "Dépublier" : "Publier le module"}
       </Button>
       <ConfirmModal onConfirm={onDelete}>
-        <Button size="sm" disabled={isLoading}>
+        <Button size="sm" disabled={isLoading} variant="destructive">
           <Trash className="h-4 w-4" />
         </Button>
       </ConfirmModal>

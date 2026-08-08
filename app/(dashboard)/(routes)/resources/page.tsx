@@ -1,5 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import {
   FileCheck,
   FileText,
@@ -13,6 +14,7 @@ import { db } from "@/lib/db";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/breadcrumb";
 import { PdfDownloadButton } from "@/components/pdf-download-button";
+import { ResourceFilters } from "./_components/resource-filters";
 
 interface ResourcesPageProps {
   searchParams: Promise<{
@@ -103,14 +105,6 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
 
   return (
     <div className="p-6 space-y-6 max-w-[1600px] mx-auto pb-12">
-      {/* Fil d'ariane / Breadcrumbs */}
-      <Breadcrumbs
-        items={[
-          { label: "EFMs & TPs Corrigés", iconName: "fileCheck" },
-          ...(type ? [{ label: type === "EFM_EXAM" ? "EFMs Corrigés" : type === "TP_CORRIGE" ? "TPs Corrigés" : "Documents" }] : []),
-        ]}
-      />
-
       {/* Hero Header */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-700 via-indigo-700 to-violet-800 p-8 md:p-10 text-white shadow-xl">
         <div className="absolute top-0 right-0 -mt-10 -mr-10 w-80 h-80 rounded-full bg-white/10 blur-2xl pointer-events-none" />
@@ -128,68 +122,10 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
         </div>
       </div>
 
-      {/* Filter Tabs & Search Bar */}
-      <div className="space-y-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          {/* Type Filter Pills */}
-          <div className="flex flex-wrap items-center gap-2">
-            <Link
-              href="/resources"
-              className={`px-3.5 py-2 text-xs sm:text-sm font-semibold rounded-xl border transition ${
-                !type
-                  ? "bg-sky-700 text-white border-sky-700 shadow-xs"
-                  : "bg-slate-50 text-slate-600 border-slate-200 hover:border-sky-600 hover:text-sky-700"
-              }`}
-            >
-              Tous les documents
-            </Link>
-            <Link
-              href={`/resources?type=EFM_EXAM${categoryId ? `&categoryId=${categoryId}` : ""}`}
-              className={`px-3.5 py-2 text-xs sm:text-sm font-semibold rounded-xl border transition ${
-                type === "EFM_EXAM"
-                  ? "bg-amber-600 text-white border-amber-600 shadow-xs"
-                  : "bg-slate-50 text-slate-600 border-slate-200 hover:border-amber-600 hover:text-amber-700"
-              }`}
-            >
-              🏆 EFMs Corrigés
-            </Link>
-            <Link
-              href={`/resources?type=TP_CORRIGE${categoryId ? `&categoryId=${categoryId}` : ""}`}
-              className={`px-3.5 py-2 text-xs sm:text-sm font-semibold rounded-xl border transition ${
-                type === "TP_CORRIGE"
-                  ? "bg-emerald-600 text-white border-emerald-600 shadow-xs"
-                  : "bg-slate-50 text-slate-600 border-slate-200 hover:border-emerald-600 hover:text-emerald-700"
-              }`}
-            >
-              ✅ TPs Corrigés
-            </Link>
-            <Link
-              href={`/resources?type=TP_SUJET${categoryId ? `&categoryId=${categoryId}` : ""}`}
-              className={`px-3.5 py-2 text-xs sm:text-sm font-semibold rounded-xl border transition ${
-                type === "TP_SUJET"
-                  ? "bg-sky-700 text-white border-sky-700 shadow-xs"
-                  : "bg-slate-50 text-slate-600 border-slate-200 hover:border-sky-600 hover:text-sky-700"
-              }`}
-            >
-              📝 Sujets TP
-            </Link>
-            <Link
-              href={`/resources?type=COURSE_PDF${categoryId ? `&categoryId=${categoryId}` : ""}`}
-              className={`px-3.5 py-2 text-xs sm:text-sm font-semibold rounded-xl border transition ${
-                type === "COURSE_PDF"
-                  ? "bg-indigo-600 text-white border-indigo-600 shadow-xs"
-                  : "bg-slate-50 text-slate-600 border-slate-200 hover:border-indigo-600 hover:text-indigo-700"
-              }`}
-            >
-              📘 Supports PDF
-            </Link>
-          </div>
-
-          <span className="text-xs font-semibold text-slate-500">
-            {attachments.length} {attachments.length === 1 ? "document" : "documents"} trouvés
-          </span>
-        </div>
-      </div>
+      {/* Filter Bar */}
+      <Suspense fallback={null}>
+        <ResourceFilters categories={categories} totalCount={attachments.length} />
+      </Suspense>
 
       {/* Attachments Resources Grid */}
       <div className="space-y-4">

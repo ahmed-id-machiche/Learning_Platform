@@ -83,9 +83,9 @@ export const TeacherSubmissionsClient = ({
       {filteredSubmissions.length === 0 && (
         <div className="text-center py-12 bg-white rounded-xl border border-dashed border-slate-300">
           <FileCheck className="h-10 w-10 text-slate-400 mx-auto mb-3" />
-          <h3 className="text-sm font-semibold text-slate-700">Aucun travail TP trouvé</h3>
+          <h3 className="text-sm font-semibold text-slate-700">Aucun devoir trouvé</h3>
           <p className="text-xs text-slate-500 mt-1">
-            Les travaux pratiques soumis par vos étudiants apparaîtront ici.
+            Les devoirs au format PDF soumis par vos étudiants apparaîtront ici.
           </p>
         </div>
       )}

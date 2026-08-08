@@ -49,8 +49,8 @@ export const SidebarItem = ({
         <span className="truncate">{label}</span>
         {badgeCount !== undefined && badgeCount > 0 && (
           <span className="ml-auto mr-5 relative flex items-center justify-center">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75" />
-            <span className="relative bg-sky-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs shrink-0">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
+            <span className="relative bg-rose-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow-xs shrink-0">
               {badgeCount}
             </span>
           </span>

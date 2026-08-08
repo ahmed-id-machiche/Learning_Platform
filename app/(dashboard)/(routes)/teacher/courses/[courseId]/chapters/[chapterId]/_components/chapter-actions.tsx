@@ -26,7 +26,7 @@ export const ChapterActions = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const onClick = async () => {
-    const notification = toast.loading("Please wait...");
+    const notification = toast.loading("Veuillez patienter...");
     try {
       setIsLoading(true);
 
@@ -34,21 +34,21 @@ export const ChapterActions = ({
         await axios.patch(
           `/api/courses/${courseId}/chapters/${chapterId}/unpublish`
         );
-        toast.success("Chapter unpublished", {
+        toast.success("Chapitre dépublié", {
           id: notification,
         });
       } else {
         await axios.patch(
           `/api/courses/${courseId}/chapters/${chapterId}/publish`
         );
-        toast.success("Chapter published", {
+        toast.success("Chapitre publié avec succès !", {
           id: notification,
         });
         router.refresh();
         router.push(`/teacher/courses/${courseId}`);
       }
     } catch {
-      toast.error("Something went wrong", {
+      toast.error("Une erreur est survenue", {
         id: notification,
       });
     } finally {
@@ -57,19 +57,19 @@ export const ChapterActions = ({
   };
 
   const onDelete = async () => {
-    const notification = toast.loading("Please wait...");
+    const notification = toast.loading("Veuillez patienter...");
     try {
       setIsLoading(true);
 
       await axios.delete(`/api/courses/${courseId}/chapters/${chapterId}`);
 
-      toast.success("Chapter deleted", {
+      toast.success("Chapitre supprimé", {
         id: notification,
       });
       router.refresh();
       router.push(`/teacher/courses/${courseId}`);
     } catch {
-      toast.error("Something went wrong", {
+      toast.error("Une erreur est survenue", {
         id: notification,
       });
     } finally {
@@ -85,10 +85,10 @@ export const ChapterActions = ({
         variant="outline"
         size="sm"
       >
-        {isPublished ? "Unpublish" : "Publish"}
+        {isPublished ? "Dépublier" : "Publier le chapitre"}
       </Button>
       <ConfirmModal onConfirm={onDelete}>
-        <Button size="sm" disabled={isLoading}>
+        <Button size="sm" disabled={isLoading} variant="destructive">
           <Trash className="h-4 w-4" />
         </Button>
       </ConfirmModal>

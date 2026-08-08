@@ -8,14 +8,19 @@ import axios from "axios";
 
 const guestRoutes = [
   {
+    icon: Compass,
+    label: "Catalogue & Modules",
+    href: "/search",
+  },
+  {
     icon: Layout,
     label: "Tableau de bord",
     href: "/",
   },
   {
-    icon: Compass,
-    label: "Catalogue & Modules",
-    href: "/search",
+    icon: FileCheck,
+    label: "Devoirs",
+    href: "/homework",
   },
   {
     icon: FileCheck,
@@ -42,7 +47,7 @@ const teacherRoutes = [
   },
   {
     icon: FileCheck,
-    label: "Corrections des TPs",
+    label: "Devoirs des Étudiants",
     href: "/teacher/submissions",
   },
   {

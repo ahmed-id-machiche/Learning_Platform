@@ -54,12 +54,12 @@ export const ChaptersForm = ({
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       await axios.post(`/api/courses/${courseId}/chapters`, values);
-      toast.success("Chapter created");
+      toast.success("Chapitre créé avec succès");
       toggleCreating();
       form.reset();
       router.refresh();
     } catch {
-      toast.error("Something went wrong");
+      toast.error("Une erreur est survenue");
     }
   };
 
@@ -69,10 +69,10 @@ export const ChaptersForm = ({
       await axios.put(`/api/courses/${courseId}/chapters/reorder`, {
         list: updateData,
       });
-      toast.success("Chapters reordered");
+      toast.success("Ordre des chapitres mis à jour");
       router.refresh();
     } catch {
-      toast.error("Something went wrong");
+      toast.error("Une erreur est survenue");
     } finally {
       setIsUpdating(false);
     }
@@ -90,14 +90,14 @@ export const ChaptersForm = ({
         </div>
       )}
       <div className="font-medium flex items-center justify-between">
-        Course chapters
+        Chapitres du Module
         <Button onClick={toggleCreating} variant="ghost">
           {isCreating ? (
-            <>Cancel</>
+            <>Annuler</>
           ) : (
             <>
               <PlusCircle className="h-4 w-4 mr-2" />
-              Add a chapter
+              Ajouter un chapitre
             </>
           )}
         </Button>
@@ -116,7 +116,7 @@ export const ChaptersForm = ({
                   <FormControl>
                     <Input
                       disabled={isSubmitting}
-                      placeholder="e.g. 'Introduction to the course'"
+                      placeholder="ex: 'Chapitre 1: Concepts de base'"
                       {...field}
                     />
                   </FormControl>
@@ -128,7 +128,7 @@ export const ChaptersForm = ({
               disabled={!isValid || isSubmitting}
               type="submit"
             >
-              Create
+              Créer le chapitre
             </Button>
           </form>
         </Form>
@@ -140,7 +140,7 @@ export const ChaptersForm = ({
             !initialData.chapters.length && "text-slate-500 italic"
           )}
         >
-          {!initialData.chapters.length && "No chapters"}
+          {!initialData.chapters.length && "Aucun chapitre pour ce module"}
           <ChaptersList
             onEdit={onEdit}
             onReorder={onReorder}
@@ -150,7 +150,7 @@ export const ChaptersForm = ({
       )}
       {!isCreating && (
         <p className="text-xs text-muted-foreground mt-4">
-          Drag and drop to reorder the chapters
+          Glissez-déposez pour réorganiser l'ordre des chapitres
         </p>
       )}
     </div>

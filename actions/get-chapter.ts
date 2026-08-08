@@ -51,11 +51,25 @@ export const getChapter = async ({
     const hasAccess = course.isFree || !!purchase;
 
     if (hasAccess) {
-      attachments = await db.attachment.findMany({
-        where: {
-          courseId: courseId,
-        },
-      });
+      try {
+        attachments = await db.attachment.findMany({
+          where: {
+            OR: [
+              { courseId: courseId, chapterId: null },
+              { chapterId: chapterId },
+            ],
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+        });
+      } catch {
+        attachments = await db.attachment.findMany({
+          where: {
+            courseId: courseId,
+          },
+        });
+      }
     }
 
     if (chapter.isFree || hasAccess) {

@@ -33,8 +33,8 @@ export async function PATCH(
       },
     });
 
-    if (!chapter || !chapter.title || !chapter.description || !chapter.videoUrl) {
-      return new NextResponse("Missing required fields", { status: 400 });
+    if (!chapter || !chapter.title) {
+      return new NextResponse("Missing title", { status: 400 });
     }
 
     const publishedChapter = await db.chapter.update({

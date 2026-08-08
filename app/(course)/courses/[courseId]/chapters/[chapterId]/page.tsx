@@ -114,15 +114,7 @@ const ChapterIdPage = async ({
             ) : null}
           </div>
 
-          {hasAccess && (
-            <div className="px-4 pb-4">
-              <TpSubmissionForm
-                courseId={courseId}
-                chapterId={chapterId}
-                initialSubmission={submission}
-              />
-            </div>
-          )}
+
 
           {!!attachments.length && (
             <>

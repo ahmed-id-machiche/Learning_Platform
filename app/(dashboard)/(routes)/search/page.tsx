@@ -1,14 +1,15 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { BookOpen, FileCheck, Layers, Sparkles, FileText } from "lucide-react";
+import Link from "next/link";
 
 import { db } from "@/lib/db";
 import { SearchInput } from "@/components/search-input";
 import { getCourses } from "@/actions/get-courses";
 
 import { Categories } from "./_components/categories";
+import { SearchFilters } from "./_components/search-filters";
 import { CoursesList } from "@/components/courses-list";
-import { Breadcrumbs } from "@/components/breadcrumb";
 
 import { Suspense } from "react";
 
@@ -74,14 +75,6 @@ const SearchPage = async ({ searchParams }: SearchPageProps) => {
       </div>
 
       <div className="p-6 space-y-6 max-w-[1600px] mx-auto">
-        {/* Fil d'ariane / Breadcrumbs */}
-        <Breadcrumbs
-          items={[
-            { label: "Catalogue & Modules", iconName: "compass" },
-            ...(selectedCategory ? [{ label: selectedCategory.name }] : []),
-          ]}
-        />
-
         {/* Platform-Aligned Hero Header */}
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-700 via-indigo-700 to-violet-800 p-8 md:p-10 text-white shadow-xl">
           {/* Subtle ambient lighting glows */}
@@ -107,59 +100,76 @@ const SearchPage = async ({ searchParams }: SearchPageProps) => {
 
             {/* Live Statistics Cards */}
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-3 shrink-0 lg:w-80">
-              <div className="group rounded-xl bg-white/15 p-3.5 backdrop-blur-md border border-white/20 hover:bg-white/25 transition-all duration-300">
+              <a
+                href="#modules-section"
+                className="group rounded-xl bg-white/15 p-3.5 backdrop-blur-md border border-white/20 hover:bg-white/25 hover:border-white/40 transition-all duration-300 cursor-pointer"
+              >
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-white/20 text-white group-hover:scale-105 transition-transform">
+                  <div className="p-2 rounded-lg bg-white/20 text-white group-hover:scale-110 transition-transform">
                     <BookOpen className="h-4 w-4" />
                   </div>
                   <div>
                     <div className="text-xl font-bold text-white tracking-tight">{totalCourses}</div>
-                    <div className="text-[11px] font-medium text-blue-100">Modules</div>
+                    <div className="text-[11px] font-medium text-blue-100 group-hover:underline">Modules</div>
                   </div>
                 </div>
-              </div>
+              </a>
 
-              <div className="group rounded-xl bg-white/15 p-3.5 backdrop-blur-md border border-white/20 hover:bg-white/25 transition-all duration-300">
+              <Link
+                href="/resources?type=TP_CORRIGE"
+                className="group rounded-xl bg-white/15 p-3.5 backdrop-blur-md border border-white/20 hover:bg-white/25 hover:border-white/40 transition-all duration-300 cursor-pointer"
+              >
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-white/20 text-white group-hover:scale-105 transition-transform">
+                  <div className="p-2 rounded-lg bg-white/20 text-white group-hover:scale-110 transition-transform">
                     <FileText className="h-4 w-4" />
                   </div>
                   <div>
                     <div className="text-xl font-bold text-white tracking-tight">{totalTps}+</div>
-                    <div className="text-[11px] font-medium text-blue-100">TPs & Sujets</div>
+                    <div className="text-[11px] font-medium text-blue-100 group-hover:underline">TPs & Sujets</div>
                   </div>
                 </div>
-              </div>
+              </Link>
 
-              <div className="group rounded-xl bg-white/15 p-3.5 backdrop-blur-md border border-white/20 hover:bg-white/25 transition-all duration-300">
+              <Link
+                href="/resources?type=EFM_EXAM"
+                className="group rounded-xl bg-white/15 p-3.5 backdrop-blur-md border border-white/20 hover:bg-white/25 hover:border-white/40 transition-all duration-300 cursor-pointer"
+              >
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-white/20 text-white group-hover:scale-105 transition-transform">
+                  <div className="p-2 rounded-lg bg-white/20 text-white group-hover:scale-110 transition-transform">
                     <FileCheck className="h-4 w-4" />
                   </div>
                   <div>
                     <div className="text-xl font-bold text-white tracking-tight">{totalEfms}+</div>
-                    <div className="text-[11px] font-medium text-blue-100">EFMs Corrigés</div>
+                    <div className="text-[11px] font-medium text-blue-100 group-hover:underline">EFMs Corrigés</div>
                   </div>
                 </div>
-              </div>
+              </Link>
 
-              <div className="group rounded-xl bg-white/15 p-3.5 backdrop-blur-md border border-white/20 hover:bg-white/25 transition-all duration-300">
+              <a
+                href="#categories-section"
+                className="group rounded-xl bg-white/15 p-3.5 backdrop-blur-md border border-white/20 hover:bg-white/25 hover:border-white/40 transition-all duration-300 cursor-pointer"
+              >
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-white/20 text-white group-hover:scale-105 transition-transform">
+                  <div className="p-2 rounded-lg bg-white/20 text-white group-hover:scale-110 transition-transform">
                     <Layers className="h-4 w-4" />
                   </div>
                   <div>
                     <div className="text-xl font-bold text-white tracking-tight">{categories.length}</div>
-                    <div className="text-[11px] font-medium text-blue-100">Filières</div>
+                    <div className="text-[11px] font-medium text-blue-100 group-hover:underline">Filières</div>
                   </div>
                 </div>
-              </div>
+              </a>
             </div>
           </div>
         </div>
 
+        {/* Interactive Search & Filter Bar */}
+        <Suspense fallback={null}>
+          <SearchFilters categories={categories} />
+        </Suspense>
+
         {/* Category Filter Carousel Section */}
-        <div className="space-y-3">
+        <div id="categories-section" className="space-y-3 scroll-mt-24">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-bold text-slate-800 tracking-tight flex items-center gap-2">
               <Layers className="h-4 w-4 text-sky-700" />
@@ -177,7 +187,7 @@ const SearchPage = async ({ searchParams }: SearchPageProps) => {
         </div>
 
         {/* Courses Section */}
-        <div className="space-y-4 pt-2">
+        <div id="modules-section" className="space-y-4 pt-2 scroll-mt-24">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <h2 className="text-lg font-bold text-slate-900 tracking-tight">

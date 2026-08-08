@@ -32,18 +32,8 @@ export async function PATCH(
       return new NextResponse("Not found", { status: 404 });
     }
 
-    const hasPublishedChapter = course.chapters.some(
-      (chapter) => chapter.isPublished
-    );
-
-    if (
-      !course.title ||
-      !course.description ||
-      !course.imageUrl ||
-      !course.categoryId ||
-      !hasPublishedChapter
-    ) {
-      return new NextResponse("Missing required fields", { status: 401 });
+    if (!course || !course.title) {
+      return new NextResponse("Missing title", { status: 400 });
     }
 
     const publishedCourse = await db.course.update({

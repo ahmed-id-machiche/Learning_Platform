@@ -80,10 +80,10 @@ const SubmissionsPage = async () => {
     <div className="p-6 space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-          Rendus des TPs & Devoirs des Étudiants
+          Devoirs & Rendus des Étudiants
         </h1>
         <p className="text-sm text-slate-500 mt-1">
-          Gérez l'ensemble des travaux pratiques soumis par vos étudiants et attribuez les notes.
+          Gérez l'ensemble des devoirs au format PDF soumis par vos étudiants et attribuez les notes et appréciations.
         </p>
       </div>
 

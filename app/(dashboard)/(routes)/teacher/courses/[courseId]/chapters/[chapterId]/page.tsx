@@ -6,12 +6,13 @@ import { ArrowLeft, Eye, LayoutDashboard, Video } from "lucide-react";
 import { db } from "@/lib/db";
 import { IconBadge } from "@/components/icon-badge";
 import { Banner } from "@/components/banner";
- 
+
 import { ChapterTitleForm } from "./_components/chapter-title-form";
 import { ChapterDescriptionForm } from "./_components/chapter-description-form";
 import { ChapterAccessForm } from "./_components/chapter-access-form";
 import { ChapterActions } from "./_components/chapter-actions";
 import { ChapterVideoForm } from "./_components/chapter-video-form";
+import { ChapterAttachmentForm } from "./_components/chapter-attachment-form";
 
 const ChapterIdPage = async ({
   params,
@@ -39,21 +40,29 @@ const ChapterIdPage = async ({
     return redirect("/");
   }
 
-  const requiredFields = [chapter.title, chapter.description, chapter.videoUrl];
+  let attachments: any[] = [];
+  try {
+    attachments = await db.attachment.findMany({
+      where: {
+        chapterId: chapterId,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  } catch (error) {
+    console.log("[CHAPTER_ATTACHMENTS_FETCH]", error);
+  }
 
-  const totalFields = requiredFields.length;
-  const completedFields = requiredFields.filter(Boolean).length;
-
-  const completionText = `(${completedFields}/${totalFields})`;
-
-  const isComplete = requiredFields.every(Boolean);
+  // Publishing requires at least a chapter title (video & description are optional)
+  const isComplete = !!chapter.title;
 
   return (
     <>
       {!chapter.isPublished && (
         <Banner
           variant="warning"
-          label="This chapter is unpublished. It will not be visible in the course"
+          label="Ce chapitre n'est pas encore publié. Il ne sera pas visible par les étudiants."
         />
       )}
       <div className="p-6">
@@ -61,16 +70,16 @@ const ChapterIdPage = async ({
           <div className="w-full">
             <Link
               href={`/teacher/courses/${courseId}`}
-              className="flex items-center text-sm hover:opacity-75 transition mb-6"
+              className="flex items-center text-sm font-semibold text-slate-600 hover:text-sky-700 transition mb-6"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to course setup
+              Retour au module
             </Link>
             <div className="flex items-center justify-between w-full">
-              <div className="flex flex-col gap-y-2">
-                <h1 className="text-2xl font-medium">Chapter Creation</h1>
-                <span className="text-sm text-slate-700">
-                  Complete all fields {completionText}
+              <div className="flex flex-col gap-y-1">
+                <h1 className="text-2xl font-bold text-slate-900">Configuration du Chapitre</h1>
+                <span className="text-sm text-slate-600 font-medium">
+                  {chapter.title ? "Prêt à être publié (Titre configuré)" : "Veuillez renseigner le titre du chapitre"}
                 </span>
               </div>
               <ChapterActions
@@ -82,12 +91,12 @@ const ChapterIdPage = async ({
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16">
-          <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
+          <div className="space-y-6">
             <div>
               <div className="flex items-center gap-x-2">
                 <IconBadge icon={LayoutDashboard} />
-                <h2 className="text-xl">Customize your chapter</h2>
+                <h2 className="text-xl font-bold text-slate-800">Informations du Chapitre</h2>
               </div>
               <ChapterTitleForm
                 initialData={chapter}
@@ -103,7 +112,7 @@ const ChapterIdPage = async ({
             <div>
               <div className="flex items-center gap-x-2">
                 <IconBadge icon={Eye} />
-                <h2 className="text-xl">Access Settings</h2>
+                <h2 className="text-xl font-bold text-slate-800">Paramètres d'Accès & Aperçu</h2>
               </div>
               <ChapterAccessForm
                 initialData={chapter}
@@ -112,16 +121,25 @@ const ChapterIdPage = async ({
               />
             </div>
           </div>
-          <div>
-            <div className="flex items-center gap-x-2">
-              <IconBadge icon={Video} />
-              <h2 className="text-xl">Add a video</h2>
+          <div className="space-y-6">
+            <div>
+              <div className="flex items-center gap-x-2">
+                <IconBadge icon={Video} />
+                <h2 className="text-xl font-bold text-slate-800">Vidéo du Cours (Optionnel)</h2>
+              </div>
+              <ChapterVideoForm
+                initialData={chapter}
+                chapterId={chapterId}
+                courseId={courseId}
+              />
             </div>
-            <ChapterVideoForm
-              initialData={chapter}
-              chapterId={chapterId}
-              courseId={courseId}
-            />
+            <div>
+              <ChapterAttachmentForm
+                initialData={{ attachments }}
+                courseId={courseId}
+                chapterId={chapterId}
+              />
+            </div>
           </div>
         </div>
       </div>

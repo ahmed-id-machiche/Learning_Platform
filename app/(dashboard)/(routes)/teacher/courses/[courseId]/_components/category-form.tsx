@@ -4,8 +4,6 @@ import * as z from "zod";
 import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Pencil } from "lucide-react";
-import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { Course } from "@prisma/client";
@@ -18,7 +16,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 interface CategoryFormProps {
   initialData: Course;
@@ -27,7 +24,9 @@ interface CategoryFormProps {
 }
 
 const formSchema = z.object({
-  categoryId: z.string().min(1),
+  categoryId: z.string().min(1, {
+    message: "La catégorie est requise",
+  }),
 });
 
 export const CategoryForm = ({
@@ -35,10 +34,7 @@ export const CategoryForm = ({
   courseId,
   options,
 }: CategoryFormProps) => {
-  const [isEditing, setIsEditing] = useState(false);
   const router = useRouter();
-
-  const toggleEdit = () => setIsEditing((current) => !current);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -47,88 +43,72 @@ export const CategoryForm = ({
     },
   });
 
-  const { isSubmitting, isValid } = form.formState;
+  const { isSubmitting, isDirty, isValid } = form.formState;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       await axios.patch(`/api/courses/${courseId}`, values);
-      toast.success("Course updated");
-      toggleEdit();
+      toast.success("Catégorie mise à jour");
+      form.reset(values);
       router.refresh();
     } catch {
-      toast.error("Something went wrong");
+      toast.error("Une erreur est survenue");
     }
   };
 
-  const selectedOption = options.find(
-    (option) => option.value === initialData.categoryId
-  );
+  const handleSelectChange = (val: string) => {
+    form.setValue("categoryId", val, { shouldDirty: true });
+    form.handleSubmit(onSubmit)();
+  };
 
   return (
-    <div className="mt-6 border bg-slate-100 rounded-md p-4">
-      <div className="font-medium flex items-center justify-between">
-        Course category
-        <Button onClick={toggleEdit} variant="ghost">
-          {isEditing ? (
-            <>Cancel</>
-          ) : (
-            <>
-              <Pencil className="h-4 w-4 mr-2" />
-              Edit category
-            </>
-          )}
-        </Button>
-      </div>
-      {!isEditing && (
-        <p
-          className={cn(
-            "text-sm mt-2",
-            !initialData.categoryId && "text-slate-500 italic"
-          )}
-        >
-          {selectedOption?.label || "No category"}
-        </p>
-      )}
-      {isEditing && (
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4 mt-4"
-          >
-            <FormField
-              control={form.control}
-              name="categoryId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <select
-                      className="w-full p-2 border border-slate-300 rounded-md bg-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
-                      disabled={isSubmitting}
-                      {...field}
-                    >
-                      <option value="">Select a category</option>
-                      {options.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="flex items-center gap-x-2">
+    <div className="mt-6 border bg-slate-100/90 rounded-xl p-4 space-y-3">
+      <label className="text-xs font-bold text-slate-800 uppercase tracking-wider block">
+        Catégorie Pédagogique :
+      </label>
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+          <FormField
+            control={form.control}
+            name="categoryId"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <select
+                    className="w-full h-10 px-3 border border-slate-200 rounded-lg bg-white text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500 cursor-pointer shadow-xs"
+                    disabled={isSubmitting}
+                    value={field.value}
+                    onChange={(e) => handleSelectChange(e.target.value)}
+                  >
+                    <option value="" disabled>
+                      -- Sélectionner une catégorie --
+                    </option>
+                    {options.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {isDirty && (
+            <div className="flex items-center justify-end gap-x-2 pt-1">
               <Button
                 disabled={!isValid || isSubmitting}
                 type="submit"
+                size="sm"
+                className="bg-sky-700 hover:bg-sky-800 text-white font-bold text-xs px-4 py-1.5 rounded-lg"
               >
-                Save
+                {isSubmitting ? "Enregistrement..." : "Enregistrer"}
               </Button>
             </div>
-          </form>
-        </Form>
-      )}
+          )}
+        </form>
+      </Form>
     </div>
   );
 };

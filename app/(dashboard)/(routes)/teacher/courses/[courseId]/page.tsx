@@ -82,7 +82,6 @@ const CourseIdPage = async ({
     course.title,
     course.description,
     course.imageUrl,
-    course.price || course.isFree,
     course.categoryId,
     course.chapters.some((chapter) => chapter.isPublished),
   ];
@@ -90,9 +89,10 @@ const CourseIdPage = async ({
   const totalFields = requiredFields.length;
   const completedFields = requiredFields.filter(Boolean).length;
 
-  const completionText = `(${completedFields}/${totalFields})`;
+  const completionText = `(${completedFields}/${totalFields} éléments configurés)`;
 
-  const isComplete = requiredFields.every(Boolean);
+  // Allow formateur to publish freely as long as title exists
+  const isComplete = !!course.title;
 
   return (
     <>
@@ -107,10 +107,10 @@ const CourseIdPage = async ({
           ]}
         />
         <div className="flex items-center justify-between">
-          <div className="flex flex-col gap-y-2">
+          <div className="flex flex-col gap-y-1">
             <h1 className="text-2xl font-bold text-slate-900">Configuration du Module OFPPT</h1>
             <span className="text-sm text-slate-600 font-medium">
-              Champs obligatoires remplis : {completionText}
+              {course.title ? "Prêt à être publié" : "Veuillez configurer au moins l'intitulé"} - {completionText}
             </span>
           </div>
           <Actions
@@ -123,7 +123,7 @@ const CourseIdPage = async ({
           <div>
             <div className="flex items-center gap-x-2">
               <IconBadge icon={LayoutDashboard} />
-              <h2 className="text-xl">Customize your OFPPT module</h2>
+              <h2 className="text-xl font-bold text-slate-800">Informations du Module OFPPT</h2>
             </div>
             <ModuleCodeForm initialData={course} courseId={course.id} />
             <TitleForm initialData={course} courseId={course.id} />
@@ -143,14 +143,14 @@ const CourseIdPage = async ({
             <div>
               <div className="flex items-center gap-x-2">
                 <IconBadge icon={ListChecks} />
-                <h2 className="text-xl">Module chapters & video lectures</h2>
+                <h2 className="text-xl font-bold text-slate-800">Chapitres & Cours du Module</h2>
               </div>
               <ChaptersForm initialData={course} courseId={course.id} />
             </div>
             <div>
               <div className="flex items-center gap-x-2">
                 <IconBadge icon={CircleDollarSign} />
-                <h2 className="text-xl">Access & Enrollment</h2>
+                <h2 className="text-xl font-bold text-slate-800">Accès & Inscription</h2>
               </div>
               <IsFreeForm initialData={course} courseId={course.id} />
               {!course.isFree && (
@@ -160,7 +160,7 @@ const CourseIdPage = async ({
             <div>
               <div className="flex items-center gap-x-2">
                 <IconBadge icon={File} />
-                <h2 className="text-xl">TPs, Exams & PDF Documents</h2>
+                <h2 className="text-xl font-bold text-slate-800">TPs, Examens & Documents PDF</h2>
               </div>
               <AttachmentForm initialData={course} courseId={course.id} />
             </div>

@@ -1,6 +1,7 @@
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
+import { isTeacher } from "@/lib/teacher";
 import { TeacherStudentsClient } from "./_components/teacher-students-client";
 
 const StudentsPage = async () => {
@@ -61,14 +62,14 @@ const StudentsPage = async () => {
     },
   });
 
-  // Unique student user IDs
+  // Unique student user IDs (excluding teachers)
   const studentUserIds = Array.from(
     new Set([
       ...purchases.map((p) => p.userId),
       ...userProgresses.map((up) => up.userId),
       ...submissions.map((s) => s.userId),
     ])
-  );
+  ).filter((id) => id !== userId && !isTeacher(id));
 
   const userMap: Record<string, { name: string; email: string }> = {};
 

@@ -1,14 +1,26 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { CheckCircle, Clock } from "lucide-react";
+import { Suspense } from "react";
 
+import { db } from "@/lib/db";
 import { getDashboardCourses } from "@/actions/get-dashboard-courses";
 import { CoursesList } from "@/components/courses-list";
 
 import { InfoCard } from "./_components/info-card";
+import { DashboardFilters } from "./_components/dashboard-filters";
 
-export default async function Dashboard() {
+interface DashboardProps {
+  searchParams: Promise<{
+    title?: string;
+    status?: string;
+    categoryId?: string;
+  }>;
+}
+
+export default async function Dashboard({ searchParams }: DashboardProps) {
   const { userId } = await auth();
+  const { title, status, categoryId } = await searchParams;
 
   if (!userId) {
     return redirect("/sign-in");
@@ -18,13 +30,48 @@ export default async function Dashboard() {
     userId
   );
 
+  const categories = await db.category.findMany({
+    orderBy: { name: "asc" },
+  });
+
+  // Filter courses based on search params
+  const filterCourse = (course: any) => {
+    if (categoryId && course.categoryId !== categoryId) {
+      return false;
+    }
+
+    if (title) {
+      const query = title.toLowerCase();
+      const matchTitle = course.title?.toLowerCase().includes(query);
+      const matchCode = course.moduleCode?.toLowerCase().includes(query);
+      const matchCat = course.category?.name?.toLowerCase().includes(query);
+      if (!matchTitle && !matchCode && !matchCat) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  const filteredInProgress = coursesInProgress.filter(filterCourse);
+  const filteredCompleted = completedCourses.filter(filterCourse);
+
+  let displayedCourses: any[] = [];
+  if (status === "IN_PROGRESS") {
+    displayedCourses = filteredInProgress;
+  } else if (status === "COMPLETED") {
+    displayedCourses = filteredCompleted;
+  } else {
+    displayedCourses = [...filteredInProgress, ...filteredCompleted];
+  }
+
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 max-w-[1600px] mx-auto">
       {/* OFPPT Stagiaire Hero Banner */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-700 via-indigo-700 to-violet-800 p-6 text-white shadow-xl">
         <div className="relative z-10 max-w-2xl">
           <span className="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-semibold backdrop-blur-md mb-3">
-            Espace Etudiant
+            Espace Étudiant
           </span>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
             Bienvenue sur votre plateforme pédagogique
@@ -50,9 +97,21 @@ export default async function Dashboard() {
         />
       </div>
 
-      <div>
-        <h2 className="text-xl font-bold text-slate-800 mb-4">Mes Modules d'Apprentissage</h2>
-        <CoursesList items={[...coursesInProgress, ...completedCourses]} />
+      {/* Interactive Search & Filter Bar */}
+      <Suspense fallback={null}>
+        <DashboardFilters categories={categories} />
+      </Suspense>
+
+      <div className="space-y-4 pt-2">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-bold text-slate-800 tracking-tight">
+            Mes Modules d'Apprentissage
+          </h2>
+          <span className="bg-sky-50 text-sky-700 text-xs font-semibold px-3 py-1 rounded-full border border-sky-200">
+            {displayedCourses.length} {displayedCourses.length === 1 ? "module" : "modules"}
+          </span>
+        </div>
+        <CoursesList items={displayedCourses} />
       </div>
     </div>
   );
