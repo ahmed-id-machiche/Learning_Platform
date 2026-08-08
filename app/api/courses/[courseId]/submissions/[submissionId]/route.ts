@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { isTeacher } from "@/lib/teacher";
 
 export async function PATCH(
   req: Request,
@@ -15,14 +16,18 @@ export async function PATCH(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
+    const isTeacherUser = isTeacher(userId);
     const courseOwner = await db.course.findUnique({
       where: {
         id: courseId,
-        userId: userId,
       },
     });
 
     if (!courseOwner) {
+      return new NextResponse("Not Found", { status: 404 });
+    }
+
+    if (!isTeacherUser && courseOwner.userId !== userId) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
