@@ -122,9 +122,9 @@ export const TopNavLinks = () => {
           <Link
             key={route.href}
             href={route.href}
-            className={`relative flex items-center gap-x-2 px-3.5 py-2 text-xs lg:text-sm font-semibold rounded-xl transition-all duration-200 ${
+            className={`relative flex items-center gap-x-2 px-3.5 py-2 text-xs lg:text-sm font-bold rounded-xl transition-all duration-200 ${
               isActive
-                ? "bg-sky-50 text-sky-700 shadow-xs border border-sky-200/80"
+                ? "bg-sky-50 text-sky-700 shadow-2xs border border-sky-200/90"
                 : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/80"
             }`}
           >

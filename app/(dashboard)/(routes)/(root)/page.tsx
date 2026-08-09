@@ -70,13 +70,10 @@ export default async function Dashboard({ searchParams }: DashboardProps) {
       {/* OFPPT Stagiaire Hero Banner */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-700 via-indigo-700 to-violet-800 p-6 text-white shadow-xl">
         <div className="relative z-10 max-w-2xl">
-          <span className="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-semibold backdrop-blur-md mb-3">
-            Espace Étudiant
-          </span>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
             Bienvenue sur votre plateforme pédagogique
           </h1>
-          <p className="mt-2 text-sm text-blue-100 leading-relaxed">
+          <p className="mt-1 text-sm text-blue-100 leading-relaxed">
             Consultez vos modules de formation, téléchargez vos TPs, préparez vos EFMs et suivez votre progression en temps réel.
           </p>
         </div>

@@ -5,7 +5,7 @@ import { NavbarRoutes } from "@/components/navbar-routes";
 
 export const Navbar = () => {
   return (
-    <div className="px-4 lg:px-6 h-full flex items-center justify-between bg-white border-b border-slate-200 shadow-2xs gap-x-4">
+    <div className="px-4 lg:px-8 h-full flex items-center justify-between bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-2xs gap-x-4">
       {/* Left: Mobile Trigger & Logo */}
       <div className="flex items-center gap-x-4 shrink-0">
         <MobileSidebar />

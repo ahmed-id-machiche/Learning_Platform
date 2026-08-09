@@ -74,15 +74,11 @@ export default async function StudentAnnouncementsPage({
       {/* Hero Banner */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-700 via-indigo-700 to-violet-800 p-8 md:p-10 text-white shadow-xl">
         <div className="absolute top-0 right-0 -mt-8 -mr-8 w-72 h-72 rounded-full bg-white/10 blur-2xl pointer-events-none" />
-        <div className="relative z-10 space-y-3 max-w-2xl">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/20 px-3.5 py-1 text-xs font-semibold text-white backdrop-blur-md border border-white/20">
-            <Volume2 className="h-3.5 w-3.5 text-sky-200" />
-            <span>Actualités & Communiqués Formateurs</span>
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+        <div className="relative z-10 space-y-2 max-w-2xl">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight">
             Annonces & Notifications OFPPT
           </h1>
-          <p className="text-sm sm:text-base text-blue-100/90 leading-relaxed">
+          <p className="text-sm text-blue-100/90 leading-relaxed font-normal pt-1">
             Restez informé des dates d'EFMs, des remises de travaux pratiques (TPs), des changements d'emploi du temps et des consignes pédagogiques de vos formateurs.
           </p>
         </div>

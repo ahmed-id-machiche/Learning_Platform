@@ -36,11 +36,11 @@ export const CourseCard = ({
 
   return (
     <Link href={`/courses/${id}`} className="block h-full group">
-      <div className="relative flex flex-col justify-between h-full bg-white border border-slate-200 rounded-xl p-3.5 hover:shadow-md transition-all duration-300 overflow-hidden">
+      <div className="relative flex flex-col justify-between h-full bg-white border border-slate-200/90 rounded-2xl p-4 hover:shadow-lg hover:border-sky-300 transition-all duration-300 overflow-hidden font-sans">
         {/* Top Media & Details Wrapper */}
         <div className="space-y-3">
           {/* Image Container with Zoom and Badges */}
-          <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-slate-100 border border-slate-100">
+          <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-slate-100 border border-slate-100">
             <Image
               fill
               unoptimized
@@ -51,17 +51,17 @@ export const CourseCard = ({
 
             {/* Top Left: Code Module Badge */}
             {moduleCode ? (
-              <div className="absolute top-2 left-2 bg-emerald-600 text-white font-bold text-[11px] px-2 py-0.5 rounded shadow">
+              <div className="absolute top-2.5 left-2.5 bg-emerald-600 text-white font-mono font-bold text-[11px] px-2.5 py-0.5 rounded-lg shadow-xs">
                 {moduleCode}
               </div>
             ) : (
-              <div className="absolute top-2 left-2 bg-sky-700 text-white font-bold text-[11px] px-2 py-0.5 rounded shadow">
+              <div className="absolute top-2.5 left-2.5 bg-sky-700 text-white font-mono font-bold text-[11px] px-2.5 py-0.5 rounded-lg shadow-xs">
                 OFPPT
               </div>
             )}
 
             {/* Top Right: Free/Access Badge */}
-            <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-md text-emerald-800 border border-emerald-200 font-semibold text-[10px] px-2 py-0.5 rounded shadow-xs uppercase tracking-wider">
+            <div className="absolute top-2.5 right-2.5 bg-white/95 backdrop-blur-md text-emerald-800 border border-emerald-200 font-bold text-[10px] px-2 py-0.5 rounded-lg shadow-2xs uppercase tracking-wider">
               Accès Gratuit
             </div>
           </div>
@@ -71,23 +71,23 @@ export const CourseCard = ({
             {/* Category & Filière Tags */}
             <div className="flex flex-wrap items-center gap-1.5">
               {filiere && (
-                <span className="text-[11px] font-medium text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded">
+                <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-lg">
                   {filiere}
                 </span>
               )}
-              <span className="text-[11px] text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
+              <span className="text-[11px] font-semibold text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-lg">
                 {category}
               </span>
             </div>
 
             {/* Course Title */}
-            <h3 className="text-base font-medium text-slate-900 group-hover:text-emerald-700 transition-colors line-clamp-2 leading-snug">
+            <h3 className="text-base font-bold text-slate-900 group-hover:text-sky-700 transition-colors line-clamp-2 leading-snug">
               {title}
             </h3>
 
             {/* Course Metadata */}
             <div className="flex items-center gap-x-3 text-xs text-slate-500 pt-1">
-              <div className="flex items-center gap-x-1 font-medium">
+              <div className="flex items-center gap-x-1.5 font-semibold text-slate-600">
                 <IconBadge size="sm" icon={BookOpen} />
                 <span>
                   {chaptersLength} {chaptersLength === 1 ? "Chapitre" : "Chapitres"}
@@ -121,7 +121,7 @@ export const CourseCard = ({
               )}
             </span>
 
-            <div className="inline-flex items-center gap-1 text-xs font-semibold text-sky-700 bg-sky-50 group-hover:bg-sky-700 group-hover:text-white px-2.5 py-1 rounded-md transition-all duration-200">
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-sky-700 bg-sky-50 group-hover:bg-sky-700 group-hover:text-white px-3 py-1.5 rounded-xl transition-all duration-200 shadow-2xs">
               <span>{hasStarted ? "Reprendre" : "Voir le module"}</span>
               <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
             </div>
