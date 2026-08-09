@@ -1,6 +1,5 @@
 import { Category, Course } from "@prisma/client";
 
-import { getProgress } from "./get-progress";
 import { db } from "@/lib/db";
 
 type CourseWithProgressWithCategory = Course & {
@@ -72,21 +71,24 @@ export const getCourses = async ({
 
     const coursesWithProgress: CourseWithProgressWithCategory[] = await Promise.all(
       courses.map(async (course) => {
-        const hasAccess = course.isFree || course.purchases.length > 0;
+        const purchases = course.purchases || [];
+        const isFree = course.isFree ?? (course.price === null || course.price === 0);
+        const hasAccess = isFree || purchases.length > 0;
 
-        const publishedChapterIds = course.chapters.map((chapter) => chapter.id);
+        const publishedChapterIds = (course.chapters || []).map((chapter) => chapter.id);
 
-        const validCompletedChapters = userId
-          ? await db.userProgress.count({
-              where: {
-                userId,
-                chapterId: {
-                  in: publishedChapterIds,
-                },
-                isCompleted: true,
+        let validCompletedChapters = 0;
+        if (userId && publishedChapterIds.length > 0) {
+          validCompletedChapters = await db.userProgress.count({
+            where: {
+              userId,
+              chapterId: {
+                in: publishedChapterIds,
               },
-            })
-          : 0;
+              isCompleted: true,
+            },
+          }).catch(() => 0);
+        }
 
         if (!hasAccess && validCompletedChapters === 0) {
           return {
@@ -109,7 +111,20 @@ export const getCourses = async ({
 
     return coursesWithProgress;
   } catch (error) {
-    console.log("[GET_COURSES]", error);
-    return [];
+    console.log("[GET_COURSES_ERROR]", error);
+    // Fallback: Query published courses directly without progress map if map fails
+    try {
+      const fallbackCourses = await db.course.findMany({
+        where: { isPublished: true },
+        include: {
+          category: true,
+          chapters: { where: { isPublished: true }, select: { id: true } },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+      return fallbackCourses.map((c) => ({ ...c, progress: null }));
+    } catch {
+      return [];
+    }
   }
 };
