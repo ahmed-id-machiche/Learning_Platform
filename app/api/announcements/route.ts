@@ -45,7 +45,7 @@ export async function GET(req: Request) {
   try {
     const { userId } = await auth();
     if (!userId) {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return NextResponse.json([]);
     }
 
     const announcements = await db.announcement.findMany({
@@ -63,11 +63,11 @@ export async function GET(req: Request) {
         { isPinned: "desc" },
         { createdAt: "desc" },
       ],
-    });
+    }).catch(() => []);
 
-    return NextResponse.json(announcements);
+    return NextResponse.json(announcements || []);
   } catch (error) {
     console.log("[ANNOUNCEMENTS_GET]", error);
-    return new NextResponse("Internal Error", { status: 500 });
+    return NextResponse.json([]);
   }
 }
