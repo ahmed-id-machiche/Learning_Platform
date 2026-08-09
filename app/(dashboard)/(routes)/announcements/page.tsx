@@ -21,23 +21,26 @@ export default async function StudentAnnouncementsPage({
 }: StudentAnnouncementsPageProps) {
   const { userId } = await auth();
   if (!userId) {
-    return redirect("/");
+    return redirect("/sign-in");
   }
 
   const { title, pinned, courseId } = await searchParams;
+
+  const validTitle = title && title !== "undefined" && title !== "null" && title.trim() !== "" ? title.trim() : undefined;
+  const validCourseId = courseId && courseId !== "undefined" && courseId !== "null" && courseId.trim() !== "" ? courseId : undefined;
 
   // Query announcements with search & filter conditions
   const announcements = await db.announcement.findMany({
     where: {
       ...(pinned === "true" ? { isPinned: true } : {}),
-      ...(courseId ? { courseId } : {}),
-      ...(title
+      ...(validCourseId ? { courseId: validCourseId } : {}),
+      ...(validTitle
         ? {
             OR: [
-              { title: { contains: title, mode: "insensitive" } },
-              { content: { contains: title, mode: "insensitive" } },
-              { course: { title: { contains: title, mode: "insensitive" } } },
-              { course: { moduleCode: { contains: title, mode: "insensitive" } } },
+              { title: { contains: validTitle, mode: "insensitive" } },
+              { content: { contains: validTitle, mode: "insensitive" } },
+              { course: { title: { contains: validTitle, mode: "insensitive" } } },
+              { course: { moduleCode: { contains: validTitle, mode: "insensitive" } } },
             ],
           }
         : {}),

@@ -29,8 +29,12 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
   const { title, type, categoryId } = await searchParams;
 
   if (!userId) {
-    return redirect("/");
+    return redirect("/sign-in");
   }
+
+  const validTitle = title && title !== "undefined" && title !== "null" && title.trim() !== "" ? title.trim() : undefined;
+  const validCategory = categoryId && categoryId !== "undefined" && categoryId !== "null" && categoryId.trim() !== "" ? categoryId : undefined;
+  const validType = type && type !== "undefined" && type !== "null" && type.trim() !== "" ? type : undefined;
 
   // Fetch categories
   const categories = await db.category.findMany({
@@ -40,14 +44,14 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
   // Query attachments with filtering
   const attachments = await db.attachment.findMany({
     where: {
-      ...(type ? { type: type as any } : {}),
-      ...(categoryId ? { course: { categoryId } } : {}),
-      ...(title
+      ...(validType ? { type: validType as any } : {}),
+      ...(validCategory ? { course: { categoryId: validCategory } } : {}),
+      ...(validTitle
         ? {
             OR: [
-              { name: { contains: title, mode: "insensitive" } },
-              { course: { title: { contains: title, mode: "insensitive" } } },
-              { course: { moduleCode: { contains: title, mode: "insensitive" } } },
+              { name: { contains: validTitle, mode: "insensitive" } },
+              { course: { title: { contains: validTitle, mode: "insensitive" } } },
+              { course: { moduleCode: { contains: validTitle, mode: "insensitive" } } },
             ],
           }
         : {}),
