@@ -28,38 +28,16 @@ const SearchPage = async ({ searchParams }: SearchPageProps) => {
     return redirect("/sign-in");
   }
 
-  const categories = await db.category.findMany({
-    orderBy: {
-      name: "asc",
-    },
-  });
+  const [categories, courses, totalCourses, totalTpsCount, totalEfmsCount, totalAttachments] =
+    await Promise.all([
+      db.category.findMany({ orderBy: { name: "asc" } }).catch(() => []),
+      getCourses({ userId, title, categoryId }).catch(() => []),
+      db.course.count({ where: { isPublished: true } }).catch(() => 0),
+      db.attachment.count({ where: { type: { in: ["TP_SUJET", "TP_CORRIGE"] } } }).catch(() => 0),
+      db.attachment.count({ where: { type: "EFM_EXAM" } }).catch(() => 0),
+      db.attachment.count().catch(() => 0),
+    ]);
 
-  const courses = await getCourses({
-    userId,
-    title,
-    categoryId,
-  });
-
-  // Calculate live statistics
-  const totalCourses = await db.course.count({
-    where: { isPublished: true },
-  });
-
-  const totalTpsCount = await db.attachment.count({
-    where: {
-      type: {
-        in: ["TP_SUJET", "TP_CORRIGE"],
-      },
-    },
-  });
-
-  const totalEfmsCount = await db.attachment.count({
-    where: {
-      type: "EFM_EXAM",
-    },
-  });
-
-  const totalAttachments = await db.attachment.count();
   const totalTps = totalTpsCount > 0 ? totalTpsCount : Math.max(totalAttachments, 12);
   const totalEfms = totalEfmsCount > 0 ? totalEfmsCount : 8;
 
