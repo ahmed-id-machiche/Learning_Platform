@@ -22,7 +22,7 @@ const ChapterIdPage = async ({
   const { courseId, chapterId } = await params;
 
   if (!userId) {
-    return redirect("/");
+    return redirect("/sign-in");
   }
 
   const {
@@ -41,7 +41,7 @@ const ChapterIdPage = async ({
   });
 
   if (!chapter || !course) {
-    return redirect("/");
+    return redirect("/search");
   }
 
   const hasAccess = course.isFree || !!purchase;

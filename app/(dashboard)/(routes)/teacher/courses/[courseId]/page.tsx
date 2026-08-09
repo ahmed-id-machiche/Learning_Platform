@@ -32,7 +32,7 @@ const CourseIdPage = async ({
   const { courseId } = await params;
 
   if (!userId) {
-    return redirect("/");
+    return redirect("/sign-in");
   }
 
   const course = await db.course.findUnique({
@@ -57,7 +57,7 @@ const CourseIdPage = async ({
     orderBy: {
       name: "asc",
     },
-  });
+  }).catch(() => []);
 
   const submissions = await db.tpSubmission.findMany({
     where: {
@@ -66,10 +66,10 @@ const CourseIdPage = async ({
     orderBy: {
       createdAt: "desc",
     },
-  });
+  }).catch(() => []);
 
   if (!course) {
-    return redirect("/");
+    return redirect("/teacher/courses");
   }
 
   const chaptersMap = course.chapters.reduce((acc, chapter) => {

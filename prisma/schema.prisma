@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Course {
-  id String @id @default(uuid())  @map("_id")
+  id String @id @default(uuid())
   userId String
   title String 
   moduleCode String?
@@ -37,7 +37,7 @@ model Course {
 }
 
 model Category {
-  id String @id @default(uuid())  @map("_id")
+  id String @id @default(uuid())
   name String @unique
   courses Course[]
 }
@@ -51,7 +51,7 @@ enum AttachmentType {
 }
 
 model Attachment {
-  id String @id @default(uuid())  @map("_id")
+  id String @id @default(uuid())
   name String
   url String 
   type AttachmentType @default(OTHER)
@@ -70,7 +70,7 @@ model Attachment {
 }
 
 model Chapter {
-  id String @id @default(uuid())  @map("_id")
+  id String @id @default(uuid())
   title String
   description String? 
   videoUrl String? 
@@ -94,7 +94,7 @@ model Chapter {
 }
 
 model MuxData {
-  id String @id @default(uuid())  @map("_id")
+  id String @id @default(uuid())
   assetId String
   playbackId String?
 
@@ -103,7 +103,7 @@ model MuxData {
 }
 
 model UserProgress {
-  id String @id @default(uuid())  @map("_id")
+  id String @id @default(uuid())
   userId String
 
   chapterId String
@@ -119,7 +119,7 @@ model UserProgress {
 }
 
 model Purchase {
-  id String @id @default(uuid())  @map("_id")
+  id String @id @default(uuid())
   userId String
 
   courseId String
@@ -133,7 +133,7 @@ model Purchase {
 }
 
 model StripeCustomer {
-  id String @id @default(uuid())  @map("_id")
+  id String @id @default(uuid())
   userId String @unique
   stripeCustomerId String @unique
 
@@ -142,7 +142,7 @@ model StripeCustomer {
 }
 
 model TpSubmission {
-  id        String   @id @default(uuid()) @map("_id")
+  id        String   @id @default(uuid())
   userId    String
   courseId  String
   chapterId String
@@ -161,7 +161,7 @@ model TpSubmission {
 }
 
 model Announcement {
-  id        String   @id @default(uuid()) @map("_id")
+  id        String   @id @default(uuid())
   title     String
   content   String
   isPinned  Boolean  @default(false)
@@ -178,7 +178,7 @@ model Announcement {
 }
 
 model Quiz {
-  id          String   @id @default(uuid()) @map("_id")
+  id          String   @id @default(uuid())
   title       String
   description String?
   isPublished Boolean  @default(false)
@@ -199,7 +199,7 @@ model Quiz {
 }
 
 model QuizQuestion {
-  id          String       @id @default(uuid()) @map("_id")
+  id          String       @id @default(uuid())
   question    String
   explanation String?
   position    Int
@@ -215,7 +215,7 @@ model QuizQuestion {
 }
 
 model QuizOption {
-  id         String       @id @default(uuid()) @map("_id")
+  id         String       @id @default(uuid())
   text       String
   isCorrect  Boolean      @default(false)
 
@@ -224,7 +224,7 @@ model QuizOption {
 }
 
 model StudentQuizResult {
-  id        String   @id @default(uuid()) @map("_id")
+  id        String   @id @default(uuid())
   userId    String
   score     Float
   maxScore  Float
@@ -239,8 +239,8 @@ model StudentQuizResult {
 }
 
 model BlockedStudent {
-  id        String   @id @default(uuid()) @map("_id")
+  id        String   @id @default(uuid())
   userId    String   @unique
   reason    String?
   createdAt DateTime @default(now())
-}
+}

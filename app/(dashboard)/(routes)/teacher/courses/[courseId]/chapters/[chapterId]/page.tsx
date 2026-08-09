@@ -23,7 +23,7 @@ const ChapterIdPage = async ({
   const { courseId, chapterId } = await params;
 
   if (!userId) {
-    return redirect("/");
+    return redirect("/sign-in");
   }
 
   const chapter = await db.chapter.findUnique({
@@ -37,7 +37,7 @@ const ChapterIdPage = async ({
   });
 
   if (!chapter) {
-    return redirect("/");
+    return redirect(`/teacher/courses/${courseId}`);
   }
 
   let attachments: any[] = [];
