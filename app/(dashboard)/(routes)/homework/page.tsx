@@ -1,13 +1,12 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { Sparkles } from "lucide-react";
 import { db } from "@/lib/db";
 import { HomeworkSubmissionClient } from "./_components/homework-submission-client";
 
 export default async function HomeworkPage() {
   const { userId } = await auth();
   if (!userId) {
-    return redirect("/");
+    return redirect("/sign-in");
   }
 
   // Fetch published courses for course selector
@@ -19,13 +18,13 @@ export default async function HomeworkPage() {
       moduleCode: true,
     },
     orderBy: { title: "asc" },
-  });
+  }).catch(() => []);
 
   // Fetch student's submitted homework
   const submissions = await db.tpSubmission.findMany({
     where: { userId },
     orderBy: { createdAt: "desc" },
-  });
+  }).catch(() => []);
 
   const courseMap: Record<string, { title: string; moduleCode: string | null }> = {};
   courses.forEach((c) => {

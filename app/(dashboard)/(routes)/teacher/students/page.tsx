@@ -8,7 +8,7 @@ const StudentsPage = async () => {
   const { userId } = await auth();
 
   if (!userId) {
-    return redirect("/");
+    return redirect("/sign-in");
   }
 
   const teacherCourses = await db.course.findMany({
@@ -22,7 +22,7 @@ const StudentsPage = async () => {
         },
       },
     },
-  });
+  }).catch(() => []);
 
   const teacherCourseIds = teacherCourses.map((c) => c.id);
 
@@ -39,7 +39,7 @@ const StudentsPage = async () => {
     where: {
       courseId: { in: teacherCourseIds },
     },
-  });
+  }).catch(() => []);
 
   const userProgresses = await db.userProgress.findMany({
     where: {
@@ -54,13 +54,13 @@ const StudentsPage = async () => {
         },
       },
     },
-  });
+  }).catch(() => []);
 
   const submissions = await db.tpSubmission.findMany({
     where: {
       courseId: { in: teacherCourseIds },
     },
-  });
+  }).catch(() => []);
 
   const blockedStudents = (await (db as any).blockedStudent?.findMany?.()) || [];
   const blockedUserIds = new Set(blockedStudents.map((b: any) => b.userId));

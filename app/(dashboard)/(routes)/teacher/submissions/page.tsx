@@ -7,7 +7,7 @@ const SubmissionsPage = async () => {
   const { userId } = await auth();
 
   if (!userId) {
-    return redirect("/");
+    return redirect("/sign-in");
   }
 
   const teacherCourses = await db.course.findMany({
@@ -19,7 +19,7 @@ const SubmissionsPage = async () => {
         },
       },
     },
-  });
+  }).catch(() => []);
 
   const teacherCourseIds = teacherCourses.map((c) => c.id);
 
@@ -32,7 +32,7 @@ const SubmissionsPage = async () => {
     orderBy: {
       createdAt: "desc",
     },
-  });
+  }).catch(() => []);
 
   const courseMap: Record<string, string> = {};
   const chapterMap: Record<string, string> = {};

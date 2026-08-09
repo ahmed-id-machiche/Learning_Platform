@@ -7,7 +7,7 @@ const TeacherAiPage = async () => {
   const { userId } = await auth();
 
   if (!userId) {
-    return redirect("/");
+    return redirect("/sign-in");
   }
 
   const courses = await db.course.findMany({
@@ -21,7 +21,7 @@ const TeacherAiPage = async () => {
     orderBy: {
       createdAt: "desc",
     },
-  });
+  }).catch(() => []);
 
   return (
     <div className="p-6 space-y-6 max-w-[1600px] mx-auto">
