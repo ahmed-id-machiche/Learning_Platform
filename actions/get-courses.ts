@@ -21,17 +21,33 @@ export const getCourses = async ({
   categoryId,
 }: GetCourses): Promise<CourseWithProgressWithCategory[]> => {
   try {
+    const validCategoryId =
+      categoryId &&
+      categoryId !== "undefined" &&
+      categoryId !== "null" &&
+      categoryId.trim() !== ""
+        ? categoryId
+        : undefined;
+
+    const validTitle =
+      title &&
+      title !== "undefined" &&
+      title !== "null" &&
+      title.trim() !== ""
+        ? title.trim()
+        : undefined;
+
     const courses = await db.course.findMany({
       where: {
         isPublished: true,
-        ...(title ? {
+        ...(validTitle ? {
           OR: [
-            { title: { contains: title, mode: "insensitive" } },
-            { moduleCode: { contains: title, mode: "insensitive" } },
-            { filiere: { contains: title, mode: "insensitive" } },
+            { title: { contains: validTitle, mode: "insensitive" } },
+            { moduleCode: { contains: validTitle, mode: "insensitive" } },
+            { filiere: { contains: validTitle, mode: "insensitive" } },
           ],
         } : {}),
-        categoryId,
+        ...(validCategoryId ? { categoryId: validCategoryId } : {}),
       },
       include: {
         category: true,

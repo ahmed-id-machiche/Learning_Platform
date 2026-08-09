@@ -13,7 +13,7 @@ const pool =
   globalThis.pgPool ||
   new Pool({
     connectionString,
-    max: 5,
+    max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 10000,
     ssl: connectionString?.includes("supabase") || connectionString?.includes("pooler")
@@ -21,7 +21,7 @@ const pool =
       : undefined,
   });
 
-globalThis.pgPool = pool;
+if (process.env.NODE_ENV !== "production") globalThis.pgPool = pool;
 
 const adapter = new PrismaPg(pool);
 
@@ -31,4 +31,4 @@ export const db =
     adapter,
   });
 
-globalThis.prisma = db;
+if (process.env.NODE_ENV !== "production") globalThis.prisma = db;
