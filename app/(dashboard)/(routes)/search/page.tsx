@@ -76,19 +76,19 @@ const SearchPage = async ({ searchParams }: SearchPageProps) => {
 
       <div className="p-6 space-y-6 max-w-[1600px] mx-auto">
         {/* Platform-Aligned Hero Header */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-700 via-indigo-700 to-violet-800 p-8 md:p-10 text-white shadow-xl">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-700 via-indigo-700 to-violet-800 p-8 text-white shadow-xl min-h-[170px] flex items-center">
           {/* Subtle ambient lighting glows */}
           <div className="absolute top-0 right-0 -mt-10 -mr-10 w-80 h-80 rounded-full bg-white/10 blur-2xl pointer-events-none" />
           <div className="absolute bottom-0 left-1/3 -mb-16 w-72 h-72 rounded-full bg-sky-400/20 blur-3xl pointer-events-none" />
 
-          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8 w-full">
             {/* Main Header Text */}
             <div className="max-w-2xl space-y-2">
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight text-white">
                 Catalogue des Formations & Modules
               </h1>
 
-              <p className="text-sm text-blue-100/90 leading-relaxed font-normal pt-1">
+              <p className="text-sm text-blue-100/90 leading-relaxed font-normal pt-1.5 max-w-2xl">
                 Explorez vos modules par filières, accédez aux travaux pratiques (TPs) corrigés, téléchargez les EFMs et maîtrisez vos compétences métier.
               </p>
             </div>

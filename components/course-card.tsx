@@ -60,10 +60,16 @@ export const CourseCard = ({
               </div>
             )}
 
-            {/* Top Right: Free/Access Badge */}
-            <div className="absolute top-2.5 right-2.5 bg-white/95 backdrop-blur-md text-emerald-800 border border-emerald-200 font-bold text-[10px] px-2 py-0.5 rounded-lg shadow-2xs uppercase tracking-wider">
-              Accès Gratuit
-            </div>
+            {/* Top Right: Free/Paid Access Badge */}
+            {isFree || !price ? (
+              <div className="absolute top-2.5 right-2.5 bg-emerald-600 text-white font-bold text-[10px] px-2.5 py-0.5 rounded-lg shadow-xs uppercase tracking-wider">
+                Accès Gratuit
+              </div>
+            ) : (
+              <div className="absolute top-2.5 right-2.5 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-[11px] px-2.5 py-0.5 rounded-lg shadow-xs">
+                {formatPrice(price)}
+              </div>
+            )}
           </div>
 
           {/* Card Body Content */}

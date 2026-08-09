@@ -68,16 +68,19 @@ export default async function Dashboard({ searchParams }: DashboardProps) {
   return (
     <div className="p-6 space-y-6 max-w-[1600px] mx-auto">
       {/* OFPPT Stagiaire Hero Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-700 via-indigo-700 to-violet-800 p-6 text-white shadow-xl">
-        <div className="relative z-10 max-w-2xl">
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-700 via-indigo-700 to-violet-800 p-8 text-white shadow-xl min-h-[170px] flex items-center">
+        {/* Subtle ambient lighting glows */}
+        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-80 h-80 rounded-full bg-white/10 blur-2xl pointer-events-none" />
+        <div className="absolute bottom-0 left-1/3 -mb-16 w-72 h-72 rounded-full bg-sky-400/20 blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 max-w-2xl space-y-2">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight text-white">
             Bienvenue sur votre plateforme pédagogique
           </h1>
-          <p className="mt-1 text-sm text-blue-100 leading-relaxed">
+          <p className="text-sm text-blue-100/90 leading-relaxed font-normal pt-1.5 max-w-2xl">
             Consultez vos modules de formation, téléchargez vos TPs, préparez vos EFMs et suivez votre progression en temps réel.
           </p>
         </div>
-        <div className="absolute -right-10 -bottom-10 h-48 w-48 rounded-full bg-white/10 blur-2xl pointer-events-none" />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

@@ -21,7 +21,6 @@ import { ChaptersForm } from "./_components/chapters-form";
 import { ModuleCodeForm } from "./_components/module-code-form";
 import { FiliereForm } from "./_components/filiere-form";
 import { IsFreeForm } from "./_components/is-free-form";
-import { TpSubmissionsList } from "./_components/tp-submissions-list";
 import { Actions } from "./_components/actions";
 
 const CourseIdPage = async ({
@@ -163,13 +162,6 @@ const CourseIdPage = async ({
                 <h2 className="text-xl font-bold text-slate-800">TPs, Examens & Documents PDF</h2>
               </div>
               <AttachmentForm initialData={course} courseId={course.id} />
-            </div>
-            <div>
-              <TpSubmissionsList
-                courseId={course.id}
-                submissions={submissions}
-                chaptersMap={chaptersMap}
-              />
             </div>
           </div>
         </div>

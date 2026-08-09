@@ -112,9 +112,20 @@ export const columns: ColumnDef<Course>[] = [
       );
     },
     cell: ({ row }) => {
+      const isFree = row.original.isFree;
+      const price = row.original.price;
+
+      if (isFree || !price) {
+        return (
+          <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
+            Gratuit
+          </span>
+        );
+      }
+
       return (
-        <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-          Accès Gratuit OFPPT
+        <span className="text-xs font-bold text-amber-800 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-200">
+          {price} MAD
         </span>
       );
     },

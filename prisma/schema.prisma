@@ -236,4 +236,11 @@ model StudentQuizResult {
 
   @@index([quizId])
   @@index([userId])
+}
+
+model BlockedStudent {
+  id        String   @id @default(uuid()) @map("_id")
+  userId    String   @unique
+  reason    String?
+  createdAt DateTime @default(now())
 }

@@ -13,6 +13,24 @@ export const getChapter = async ({
   chapterId,
 }: GetChapterProps) => {
   try {
+    const isBlocked = await (db as any).blockedStudent?.findUnique?.({
+      where: { userId },
+    });
+
+    if (isBlocked) {
+      return {
+        chapter: null,
+        course: null,
+        muxData: null,
+        attachments: [],
+        nextChapter: null,
+        userProgress: null,
+        purchase: null,
+        submission: null,
+        isBlocked: true,
+      };
+    }
+
     const purchase = await db.purchase.findUnique({
       where: {
         userId_courseId: {

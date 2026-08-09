@@ -42,7 +42,7 @@ export const PriceForm = ({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      price: initialData?.price || 0,
+      price: initialData?.price ?? undefined,
     },
   });
 
@@ -51,25 +51,25 @@ export const PriceForm = ({
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       await axios.patch(`/api/courses/${courseId}`, values);
-      toast.success("Course updated");
+      toast.success("Prix du module mis à jour !");
       toggleEdit();
       router.refresh();
     } catch {
-      toast.error("Something went wrong");
+      toast.error("Une erreur est survenue.");
     }
   };
 
   return (
-    <div className="mt-6 border bg-slate-100 rounded-md p-4">
-      <div className="font-medium flex items-center justify-between">
-        Course price
-        <Button onClick={toggleEdit} variant="ghost">
+    <div className="mt-6 border border-slate-200 bg-slate-50/60 rounded-2xl p-4 shadow-xs">
+      <div className="font-bold text-sm text-slate-800 flex items-center justify-between">
+        Prix du Module (DH)
+        <Button onClick={toggleEdit} variant="ghost" className="text-xs font-semibold hover:bg-slate-200/60 rounded-xl">
           {isEditing ? (
-            <>Cancel</>
+            <>Annuler</>
           ) : (
             <>
-              <Pencil className="h-4 w-4 mr-2" />
-              Edit price
+              <Pencil className="h-3.5 w-3.5 mr-1.5" />
+              Modifier le prix
             </>
           )}
         </Button>
@@ -77,18 +77,18 @@ export const PriceForm = ({
       {!isEditing && (
         <p
           className={cn(
-            "text-sm mt-2",
-            !initialData.price && "text-slate-500 italic"
+            "text-sm font-semibold mt-2",
+            !initialData.price && "text-slate-500 italic font-normal"
           )}
         >
-          {initialData.price ? `$${initialData.price}` : "No price set"}
+          {initialData.price ? `${initialData.price} DH` : "Module gratuit (Aucun prix fixé)"}
         </p>
       )}
       {isEditing && (
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4 mt-4"
+            className="space-y-4 mt-3"
           >
             <FormField
               control={form.control}
@@ -100,9 +100,13 @@ export const PriceForm = ({
                       type="number"
                       step="0.01"
                       disabled={isSubmitting}
-                      placeholder="Set a price for your course"
-                      value={field.value ?? ""}
-                      onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                      placeholder="Saisissez un prix (ex: 150)"
+                      value={field.value === undefined || field.value === null || field.value === 0 ? "" : field.value}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        field.onChange(val === "" ? 0 : parseFloat(val));
+                      }}
+                      className="bg-white border-slate-200 rounded-xl text-xs h-10"
                     />
                   </FormControl>
                   <FormMessage />
@@ -113,8 +117,9 @@ export const PriceForm = ({
               <Button
                 disabled={!isValid || isSubmitting}
                 type="submit"
+                className="bg-sky-700 hover:bg-sky-800 text-white font-bold text-xs rounded-xl h-9 px-4 cursor-pointer"
               >
-                Save
+                Enregistrer le prix
               </Button>
             </div>
           </form>
