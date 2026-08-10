@@ -121,7 +121,7 @@ async function main() {
         filiere: "Technicien Spécialisé en Commerce Digital",
         niveau: "Technicien Spécialisé",
         description: "Création et gestion de plateformes e-commerce, campagnes publicitaires sur réseaux sociaux, référencement SEO et tunnel de conversion.",
-        imageUrl: "https://images.unsplash.com/photo-1556742049-0a67daf4005a?auto=format&fit=crop&w=800&q=80",
+        imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
         isPublished: true,
         isFree: true,
         categoryId: catMap.get("Commerce Digital & Marketing"),
@@ -154,6 +154,13 @@ async function main() {
             chapters: {
               create: c.chapters,
             },
+          },
+        });
+      } else {
+        await db.course.update({
+          where: { id: existingCourse.id },
+          data: {
+            imageUrl: c.imageUrl,
           },
         });
       }
