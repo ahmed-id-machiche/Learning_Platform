@@ -40,7 +40,7 @@ export const FileUpload = ({
       // Clean filename for cloud storage
       const fileExt = file.name.split(".").pop() || "mp4";
       const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-      const storagePath = `videos/${Date.now()}_${cleanFileName}`;
+      const storagePath = `${Date.now()}_${cleanFileName}`;
 
       // STREAM UPLOAD: Pass raw File directly to Supabase Storage (Zero Base64 RAM usage!)
       const { data, error } = await supabase.storage
