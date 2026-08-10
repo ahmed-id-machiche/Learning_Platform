@@ -7,22 +7,46 @@ import { Banner } from "@/components/banner";
 import { Preview } from "@/components/preview";
 import { Separator } from "@/components/ui/separator";
 import { PdfDownloadButton } from "@/components/pdf-download-button";
+import { db } from "@/lib/db";
 
 import { VideoPlayer } from "./_components/video-player";
 import { CourseEnrollButton } from "./_components/course-enroll-button";
 import { CourseProgressButton } from "./_components/course-progress-button";
-import { TpSubmissionForm } from "./_components/tp-submission-form";
 
 const ChapterIdPage = async ({
   params,
+  searchParams,
 }: {
   params: Promise<{ courseId: string; chapterId: string }>;
+  searchParams: Promise<{ success?: string }>;
 }) => {
   const { userId } = await auth();
   const { courseId, chapterId } = await params;
+  const { success } = await searchParams;
 
   if (!userId) {
     return redirect("/sign-in");
+  }
+
+  // Auto-grant access if returning from Stripe Checkout success
+  if (success === "1" || success === "true") {
+    try {
+      await db.purchase.upsert({
+        where: {
+          userId_courseId: {
+            userId,
+            courseId,
+          },
+        },
+        update: {},
+        create: {
+          userId,
+          courseId,
+        },
+      });
+    } catch (e) {
+      console.log("[STRIPE_RETURN_AUTO_ENROLL_ERROR]", e);
+    }
   }
 
   const {
@@ -33,7 +57,6 @@ const ChapterIdPage = async ({
     nextChapter,
     userProgress,
     purchase,
-    submission,
   } = await getChapter({
     userId,
     chapterId,
@@ -44,7 +67,7 @@ const ChapterIdPage = async ({
     return redirect("/search");
   }
 
-  const hasAccess = course.isFree || !!purchase;
+  const hasAccess = course.isFree || !!purchase || success === "1" || success === "true";
   const isLocked = !chapter.isFree && !hasAccess;
   const completeOnEnd = hasAccess && !userProgress?.isCompleted;
 
@@ -113,8 +136,6 @@ const ChapterIdPage = async ({
               <Preview value={chapter.description} />
             ) : null}
           </div>
-
-
 
           {!!attachments.length && (
             <>

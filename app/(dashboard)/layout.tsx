@@ -1,10 +1,25 @@
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+import { db } from "@/lib/db";
 import { Navbar } from "./_components/navbar";
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { userId } = await auth();
+
+  if (userId) {
+    const isBlocked = await db.blockedStudent.findUnique({
+      where: { userId },
+    });
+
+    if (isBlocked) {
+      return redirect("/blocked");
+    }
+  }
+
   return (
     <div className="min-h-full bg-slate-50/50">
       {/* Top Navbar (100% Full Width) */}

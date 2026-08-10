@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { isTeacher } from "@/lib/teacher";
@@ -17,35 +17,29 @@ export async function PATCH(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const blockedModel = (db as any).blockedStudent;
-
     if (isBlocked) {
-      if (blockedModel?.upsert) {
-        await blockedModel.upsert({
-          where: { userId: studentId },
-          update: {},
-          create: {
-            userId: studentId,
-            reason: "Bloqué par le formateur",
-          },
-        });
-      } else {
-        await db.$executeRawUnsafe(
-          `INSERT INTO "BlockedStudent" ("_id", "userId", "reason", "createdAt") VALUES (gen_random_uuid()::text, $1, 'Bloqué par le formateur', NOW()) ON CONFLICT ("userId") DO NOTHING`,
-          studentId
-        );
+      await db.blockedStudent.upsert({
+        where: { userId: studentId },
+        update: {
+          reason: "Bloqué par le formateur",
+        },
+        create: {
+          userId: studentId,
+          reason: "Bloqué par le formateur",
+        },
+      });
+
+      // Revoke all active Clerk sign-in sessions for immediate logout
+      try {
+        const client = await clerkClient();
+        await client.users.revokeSignInSessions({ userId: studentId });
+      } catch (clerkErr) {
+        console.log("[CLERK_SESSION_REVOKE_ERROR]", clerkErr);
       }
     } else {
-      if (blockedModel?.deleteMany) {
-        await blockedModel.deleteMany({
-          where: { userId: studentId },
-        });
-      } else {
-        await db.$executeRawUnsafe(
-          `DELETE FROM "BlockedStudent" WHERE "userId" = $1`,
-          studentId
-        );
-      }
+      await db.blockedStudent.deleteMany({
+        where: { userId: studentId },
+      });
     }
 
     return NextResponse.json({ success: true, isBlocked });
@@ -68,17 +62,21 @@ export async function DELETE(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const blockedModel = (db as any).blockedStudent;
-
     // Delete student purchases, progress, submissions & blocked records
     await Promise.all([
       db.purchase.deleteMany({ where: { userId: studentId } }),
       db.userProgress.deleteMany({ where: { userId: studentId } }),
       db.tpSubmission.deleteMany({ where: { userId: studentId } }),
-      blockedModel?.deleteMany
-        ? blockedModel.deleteMany({ where: { userId: studentId } })
-        : db.$executeRawUnsafe(`DELETE FROM "BlockedStudent" WHERE "userId" = $1`, studentId).catch(() => {}),
+      db.blockedStudent.deleteMany({ where: { userId: studentId } }),
     ]);
+
+    // Revoke sessions
+    try {
+      const client = await clerkClient();
+      await client.users.revokeSignInSessions({ userId: studentId });
+    } catch (e) {
+      console.log("[CLERK_SESSION_REVOKE_DELETE_ERROR]", e);
+    }
 
     return NextResponse.json({ success: true, message: "Student access removed" });
   } catch (error) {

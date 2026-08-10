@@ -21,6 +21,14 @@ const CourseLayout = async ({
     return redirect("/");
   }
 
+  const isBlocked = await db.blockedStudent.findUnique({
+    where: { userId },
+  });
+
+  if (isBlocked) {
+    return redirect("/blocked");
+  }
+
   const course = await db.course.findUnique({
     where: {
       id: courseId,
