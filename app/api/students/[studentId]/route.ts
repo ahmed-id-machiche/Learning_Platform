@@ -29,17 +29,28 @@ export async function PATCH(
         },
       });
 
-      // Revoke all active Clerk sign-in sessions for immediate logout
+      // Ban user in Clerk to immediately revoke active sessions
       try {
         const client = await clerkClient();
-        await client.users.revokeSignInSessions({ userId: studentId });
+        if (client?.users?.banUser) {
+          await client.users.banUser(studentId);
+        }
       } catch (clerkErr) {
-        console.log("[CLERK_SESSION_REVOKE_ERROR]", clerkErr);
+        console.log("[CLERK_BAN_USER_ERROR]", clerkErr);
       }
     } else {
       await db.blockedStudent.deleteMany({
         where: { userId: studentId },
       });
+
+      try {
+        const client = await clerkClient();
+        if (client?.users?.unbanUser) {
+          await client.users.unbanUser(studentId);
+        }
+      } catch (clerkErr) {
+        console.log("[CLERK_UNBAN_USER_ERROR]", clerkErr);
+      }
     }
 
     return NextResponse.json({ success: true, isBlocked });
@@ -70,12 +81,13 @@ export async function DELETE(
       db.blockedStudent.deleteMany({ where: { userId: studentId } }),
     ]);
 
-    // Revoke sessions
     try {
       const client = await clerkClient();
-      await client.users.revokeSignInSessions({ userId: studentId });
+      if (client?.users?.banUser) {
+        await client.users.banUser(studentId);
+      }
     } catch (e) {
-      console.log("[CLERK_SESSION_REVOKE_DELETE_ERROR]", e);
+      console.log("[CLERK_BAN_USER_DELETE_ERROR]", e);
     }
 
     return NextResponse.json({ success: true, message: "Student access removed" });
