@@ -8,7 +8,6 @@
     "postinstall": "prisma generate",
     "start": "next start",
     "lint": "eslint"
-    
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
@@ -21,6 +20,7 @@
     "@prisma/adapter-pg": "^7.9.0",
     "@prisma/client": "^7.9.0",
     "@radix-ui/react-separator": "^1.1.15",
+    "@supabase/supabase-js": "^2.112.2",
     "@tanstack/react-table": "^8.21.3",
     "axios": "^1.18.1",
     "class-variance-authority": "^0.7.1",
