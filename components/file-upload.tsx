@@ -1,6 +1,6 @@
 "use client";
 
-import { UploadCloud, Loader2, Link2, CheckCircle2, Film } from "lucide-react";
+import { UploadCloud, Loader2 } from "lucide-react";
 import { useState, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/lib/supabase-client";
@@ -16,33 +16,29 @@ export const FileUpload = ({
   endpoint,
 }: FileUploadProps) => {
   const [isDragging, setIsDragging] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState<string>("");
-  const [uploadedName, setUploadedName] = useState<string>("");
   const [showUrlInput, setShowUrlInput] = useState(false);
   const [urlInput, setUrlInput] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const isVideo = endpoint === "chapterVideo";
+  const fileTypeLabel =
+    endpoint === "chapterVideo"
+      ? "Video (512GB)"
+      : endpoint === "courseImage"
+      ? "Image (4MB)"
+      : "File (PDF, Video, Image up to 100MB)";
 
-  const fileTypeLabel = isVideo
-    ? "Fichier vidéo MP4, WebM, MOV (toutes tailles supportées)"
-    : endpoint === "courseImage"
-    ? "Image (JPG, PNG)"
-    : "Fichier PDF, Word, TP ou Zip";
-
-  const uploadFile = async (file: File) => {
+  const processFile = async (file: File) => {
+    setSelectedFile(file);
     try {
       setIsUploading(true);
-      const fileSizeMB = (file.size / (1024 * 1024)).toFixed(1);
-      setUploadProgress(`Téléversement direct (${fileSizeMB} Mo)...`);
 
-      // Clean filename for cloud storage
-      const fileExt = file.name.split(".").pop() || "mp4";
+      const fileExt = file.name.split(".").pop() || "bin";
       const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
       const storagePath = `${Date.now()}_${cleanFileName}`;
 
-      // STREAM UPLOAD: Pass raw File directly to Supabase Storage (Zero Base64 RAM usage!)
+      // Upload directly to Supabase Storage
       const { data, error } = await supabase.storage
         .from("attachments")
         .upload(storagePath, file, {
@@ -55,41 +51,43 @@ export const FileUpload = ({
           .from("attachments")
           .getPublicUrl(data.path);
 
-        setUploadedName(file.name);
         onChange(publicData.publicUrl, file.name);
-        toast.success("Vidéo téléversée avec succès !");
         return;
       }
 
-      // If bucket does not exist or public permission is restricted, fallback for smaller files
+      // Fallback: If bucket or public URL issue, fallback for small files
       if (file.size < 4 * 1024 * 1024) {
         const reader = new FileReader();
         reader.onloadend = () => {
           if (typeof reader.result === "string") {
-            setUploadedName(file.name);
             onChange(reader.result, file.name);
-            toast.success("Vidéo chargée !");
           }
         };
         reader.readAsDataURL(file);
       } else {
-        toast.error(
-          "Impossible de téléverser la vidéo directement. Assurez-vous que le stockage cloud est actif ou collez un lien."
-        );
+        toast.error("Cloud storage upload error.");
       }
     } catch (err) {
-      console.error("[STREAM_UPLOAD_ERROR]", err);
-      toast.error("Erreur lors du téléversement de la vidéo.");
+      console.error("[UPLOAD_ERROR]", err);
+      toast.error("Upload error.");
     } finally {
       setIsUploading(false);
-      setUploadProgress("");
     }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      uploadFile(file);
+      processFile(file);
+    }
+  };
+
+  const handleUploadSelected = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (selectedFile) {
+      processFile(selectedFile);
+    } else {
+      fileInputRef.current?.click();
     }
   };
 
@@ -108,104 +106,97 @@ export const FileUpload = ({
     setIsDragging(false);
     const file = e.dataTransfer.files?.[0];
     if (file) {
-      uploadFile(file);
+      processFile(file);
     }
   };
 
   return (
-    <div className="w-full space-y-3">
+    <div className="w-full">
       <input
         type="file"
         ref={fileInputRef}
         onChange={handleFileChange}
         className="hidden"
         accept={
-          isVideo
+          endpoint === "chapterVideo"
             ? "video/*"
             : endpoint === "courseImage"
             ? "image/*"
             : ".pdf,.doc,.docx,.png,.jpg,.jpeg,.zip"
         }
       />
-
       <div
         onClick={() => !isUploading && fileInputRef.current?.click()}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        className={`border-2 border-dashed rounded-2xl p-7 flex flex-col items-center justify-center cursor-pointer transition-all ${
+        className={`border-2 border-dashed rounded-lg p-8 flex flex-col items-center justify-center cursor-pointer transition-all ${
           isDragging
-            ? "border-sky-500 bg-sky-50/50 scale-[0.99]"
-            : "border-slate-200 bg-slate-50/50 hover:bg-slate-100/60 hover:border-sky-400"
+            ? "border-blue-500 bg-blue-50/50 scale-[0.99]"
+            : "border-slate-300 bg-white/70 hover:bg-slate-50/80 hover:border-blue-400"
         }`}
       >
         {isUploading ? (
-          <div className="flex flex-col items-center justify-center py-3 space-y-3">
-            <Loader2 className="h-9 w-9 text-sky-600 animate-spin" />
-            <div className="text-center space-y-1">
-              <p className="text-xs font-bold text-sky-800">Envoi direct de la vidéo en cours...</p>
-              <p className="text-[11px] text-slate-500 font-medium">{uploadProgress}</p>
-            </div>
+          <div className="flex flex-col items-center justify-center py-2 space-y-2">
+            <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
+            <p className="text-xs font-medium text-slate-600">Uploading...</p>
           </div>
         ) : (
           <>
-            <div className="p-3.5 bg-white shadow-xs rounded-2xl mb-2 text-sky-600 border border-slate-100">
-              {isVideo ? <Film className="h-7 w-7 text-sky-600" /> : <UploadCloud className="h-7 w-7 text-sky-600" />}
+            <div className="p-3 bg-slate-200/60 rounded-full mb-3 text-slate-500">
+              <UploadCloud className="h-8 w-8 text-slate-600" />
             </div>
-            <p className="text-xs font-bold text-slate-800 hover:text-sky-700 transition">
-              {isVideo ? "Sélectionner la vidéo du professeur depuis le PC" : "Cliquez pour choisir un fichier ou glissez-déposez"}
+            <p className="text-sm font-bold text-indigo-600 hover:underline">
+              Choose files or drag and drop
             </p>
-            <p className="text-[11px] text-slate-400 mt-1 font-medium text-center">
+            <p className="text-xs text-slate-500 mt-1 mb-4 font-medium">
               {fileTypeLabel}
             </p>
+
+            <button
+              type="button"
+              onClick={handleUploadSelected}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs px-5 py-2 rounded-md shadow-sm transition-all flex items-center justify-center gap-x-1"
+            >
+              Upload 1 file
+            </button>
           </>
         )}
       </div>
 
-      {uploadedName && (
-        <div className="flex items-center gap-2 text-xs text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200">
-          <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
-          <span className="truncate">Vidéo chargée : <strong>{uploadedName}</strong></span>
-        </div>
-      )}
-
-      {/* Option for Direct URL */}
-      <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
+      <div className="mt-2 flex items-center justify-between text-xs text-slate-500">
         <button
           type="button"
           onClick={(e) => {
             e.stopPropagation();
             setShowUrlInput(!showUrlInput);
           }}
-          className="text-sky-700 font-semibold hover:underline text-xs flex items-center gap-1.5 cursor-pointer"
+          className="text-blue-600 font-medium hover:underline text-xs"
         >
-          <Link2 className="h-3.5 w-3.5" />
-          {showUrlInput ? "Masquer la saisie d'URL" : "Ou saisir un lien vidéo externe (YouTube / Cloud)"}
+          {showUrlInput ? "Hide URL option" : "Or enter URL directly"}
         </button>
       </div>
 
       {showUrlInput && (
-        <div className="flex gap-x-2 pt-1">
+        <div className="mt-2 flex gap-x-2">
           <Input
-            placeholder="Ex: https://.../video.mp4"
+            placeholder="Paste URL (e.g. https://...)"
             value={urlInput}
             onChange={(e) => setUrlInput(e.target.value)}
-            className="text-xs h-9 rounded-xl border-slate-200 bg-white"
+            className="text-xs h-8"
           />
           <button
             type="button"
             onClick={() => {
               if (urlInput) {
-                const name = urlInput.split("/").pop()?.split("?")[0] || "Video_Lien.mp4";
-                setUploadedName(name);
+                const name = urlInput.split("/").pop() || "Attachment";
                 onChange(urlInput, name);
-                toast.success("Lien enregistré !");
               }
             }}
             disabled={!urlInput}
-            className="px-4 py-1.5 bg-sky-700 text-white rounded-xl text-xs font-bold hover:bg-sky-800 disabled:opacity-50 transition shrink-0 cursor-pointer"
+            className="px-3 py-1 bg-blue-600 text-white rounded-md text-xs font-medium hover:bg-blue-700 disabled:opacity-50"
           >
-            Valider
+            Save
           </button>
         </div>
       )}
