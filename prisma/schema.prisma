@@ -244,3 +244,12 @@ model BlockedStudent {
   reason    String?
   createdAt DateTime @default(now())
 }
+
+model StudentProfile {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  year      String
+  filiere   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

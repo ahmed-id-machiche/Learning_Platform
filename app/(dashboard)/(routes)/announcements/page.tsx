@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { Bell, Pin, Sparkles, BookOpen, Calendar, UserCheck, Volume2 } from "lucide-react";
+import { Bell, Pin, BookOpen, Calendar, UserCheck, Volume2 } from "lucide-react";
 import { Suspense } from "react";
 import { db } from "@/lib/db";
 import Link from "next/link";

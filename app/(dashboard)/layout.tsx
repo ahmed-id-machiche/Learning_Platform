@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { Navbar } from "./_components/navbar";
+import { Footer } from "@/components/footer";
 
 export default async function DashboardLayout({
   children,
@@ -21,15 +22,20 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-full bg-slate-50/50">
+    <div className="min-h-screen bg-slate-50/50 flex flex-col justify-between">
       {/* Top Navbar (100% Full Width) */}
       <header className="h-[72px] fixed inset-x-0 top-0 w-full z-50">
         <Navbar />
       </header>
 
-      {/* Main Page Content (100% Full Width) */}
-      <main className="pt-[72px] min-h-screen w-full">
-        {children}
+      {/* Main Page Content */}
+      <main className="pt-[72px] flex-1 w-full flex flex-col justify-between">
+        <div className="flex-1">
+          {children}
+        </div>
+
+        {/* Global Udemy-Style Footer */}
+        <Footer />
       </main>
     </div>
   );

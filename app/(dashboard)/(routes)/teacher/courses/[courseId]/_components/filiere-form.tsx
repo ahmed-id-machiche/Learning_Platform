@@ -18,6 +18,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
+import { OFPPT_FILIERES } from "@/lib/ofppt-constants";
+
 interface FiliereFormProps {
   initialData: {
     filiere: string | null;
@@ -25,18 +27,9 @@ interface FiliereFormProps {
   courseId: string;
 }
 
-const filiereOptions = [
-  "Développement Digital (DD)",
-  "Infrastructure Digitale (ID)",
-  "Gestion des Entreprises (GE)",
-  "Finance & Comptabilité",
-  "Commerce International & Logistique",
-  "Génie Civil & BTP",
-  "Génie Électrique & Électromécanique",
-  "Génie Mécanique & Automotion",
-  "Tronc Commun Digital (TS 1ère Année)",
-  "Tronc Commun Gestion (TS 1ère Année)",
-  "Secrétariat, Bureautique & Communication",
+const defaultFiliereOptions = [
+  ...OFPPT_FILIERES.map((f) => f.value),
+  "Tous les étudiants (Général)",
   "Autre Filière Spécialisée OFPPT",
 ];
 
@@ -51,7 +44,7 @@ export const FiliereForm = ({
   courseId,
 }: FiliereFormProps) => {
   const [isCustom, setIsCustom] = useState(
-    !!initialData.filiere && !filiereOptions.includes(initialData.filiere)
+    !!initialData.filiere && !defaultFiliereOptions.includes(initialData.filiere)
   );
   const router = useRouter();
 
@@ -104,13 +97,13 @@ export const FiliereForm = ({
                     <select
                       disabled={isSubmitting}
                       className="w-full h-10 px-3 text-xs font-semibold rounded-lg border border-slate-200 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500 cursor-pointer shadow-xs"
-                      value={filiereOptions.includes(field.value) ? field.value : field.value ? "Autre Filière Spécialisée OFPPT" : ""}
+                      value={defaultFiliereOptions.includes(field.value) ? field.value : field.value ? "Autre Filière Spécialisée OFPPT" : ""}
                       onChange={(e) => handleSelectChange(e.target.value)}
                     >
                       <option value="" disabled>
                         -- Sélectionner directement une filière OFPPT --
                       </option>
-                      {filiereOptions.map((opt) => (
+                      {defaultFiliereOptions.map((opt) => (
                         <option key={opt} value={opt}>
                           {opt}
                         </option>
@@ -128,7 +121,7 @@ export const FiliereForm = ({
                         type="button"
                         onClick={() => {
                           setIsCustom(false);
-                          form.setValue("filiere", filiereOptions[0], { shouldDirty: true });
+                          form.setValue("filiere", defaultFiliereOptions[0], { shouldDirty: true });
                         }}
                         className="text-xs text-sky-700 font-semibold hover:underline"
                       >

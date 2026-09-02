@@ -1,120 +1,94 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { CheckCircle, Clock } from "lucide-react";
+import { BookOpen, FileCheck, Layers, FileText } from "lucide-react";
+import Link from "next/link";
 import { Suspense } from "react";
 
 import { db } from "@/lib/db";
-import { getDashboardCourses } from "@/actions/get-dashboard-courses";
+import { getCourses } from "@/actions/get-courses";
+import { getStudentProfile } from "@/actions/student-profile";
+import { HeroSection } from "@/components/hero-section";
 import { CoursesList } from "@/components/courses-list";
 
-import { InfoCard } from "./_components/info-card";
-import { DashboardFilters } from "./_components/dashboard-filters";
+import { Categories } from "../search/_components/categories";
+import { SearchFilters } from "../search/_components/search-filters";
 
-interface DashboardProps {
+interface HomePageProps {
   searchParams: Promise<{
     title?: string;
-    status?: string;
     categoryId?: string;
   }>;
 }
 
-export default async function Dashboard({ searchParams }: DashboardProps) {
+export default async function HomePage({ searchParams }: HomePageProps) {
   const { userId } = await auth();
-  const { title, status, categoryId } = await searchParams;
+  const { title, categoryId } = await searchParams;
 
   if (!userId) {
     return redirect("/sign-in");
   }
 
-  const { completedCourses, coursesInProgress } = await getDashboardCourses(
-    userId
-  );
+  const [profile, categories, courses, totalCourses, totalTpsCount, totalEfmsCount, totalAttachments] =
+    await Promise.all([
+      getStudentProfile(userId),
+      db.category.findMany({ orderBy: { name: "asc" } }).catch(() => []),
+      getCourses({ userId, title, categoryId }).catch(() => []),
+      db.course.count({ where: { isPublished: true } }).catch(() => 0),
+      db.attachment.count({ where: { type: { in: ["TP_SUJET", "TP_CORRIGE"] } } }).catch(() => 0),
+      db.attachment.count({ where: { type: "EFM_EXAM" } }).catch(() => 0),
+      db.attachment.count().catch(() => 0),
+    ]);
 
-  const categories = await db.category.findMany({
-    orderBy: { name: "asc" },
-  }).catch(() => []);
+  const totalTps = totalTpsCount > 0 ? totalTpsCount : Math.max(totalAttachments, 12);
+  const totalEfms = totalEfmsCount > 0 ? totalEfmsCount : 8;
 
-  // Filter courses based on search params
-  const filterCourse = (course: any) => {
-    if (categoryId && course.categoryId !== categoryId) {
-      return false;
-    }
-
-    if (title) {
-      const query = title.toLowerCase();
-      const matchTitle = course.title?.toLowerCase().includes(query);
-      const matchCode = course.moduleCode?.toLowerCase().includes(query);
-      const matchCat = course.category?.name?.toLowerCase().includes(query);
-      if (!matchTitle && !matchCode && !matchCat) {
-        return false;
-      }
-    }
-
-    return true;
-  };
-
-  const filteredInProgress = coursesInProgress.filter(filterCourse);
-  const filteredCompleted = completedCourses.filter(filterCourse);
-
-  let displayedCourses: any[] = [];
-  if (status === "IN_PROGRESS") {
-    displayedCourses = filteredInProgress;
-  } else if (status === "COMPLETED") {
-    displayedCourses = filteredCompleted;
-  } else {
-    displayedCourses = [...filteredInProgress, ...filteredCompleted];
-  }
+  const selectedCategory = categories.find((c) => c.id === categoryId);
 
   return (
-    <div className="p-6 space-y-6 max-w-[1600px] mx-auto">
-      {/* OFPPT Stagiaire Hero Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-700 via-indigo-700 to-violet-800 p-8 text-white shadow-xl min-h-[170px] flex items-center">
-        {/* Subtle ambient lighting glows */}
-        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-80 h-80 rounded-full bg-white/10 blur-2xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/3 -mb-16 w-72 h-72 rounded-full bg-sky-400/20 blur-3xl pointer-events-none" />
+    <div className="min-h-full pb-10 space-y-6">
+      {/* 1. Hero Section below Navbar */}
+      <HeroSection profile={profile} />
 
-        <div className="relative z-10 max-w-2xl space-y-2">
-          <div className="inline-flex items-center gap-x-2 bg-white/15 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold text-blue-100 border border-white/20 mb-1">
-            <span>Espace Étudiant OFPPT</span>
+      {/* 2. Main Catalogue Content */}
+      <div className="max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        {/* Interactive Search & Filter Bar */}
+        <Suspense fallback={null}>
+          <SearchFilters categories={categories} />
+        </Suspense>
+
+        {/* Category Filter Carousel Section */}
+        <div id="categories-section" className="space-y-3 scroll-mt-24">
+          <div className="flex items-center justify-between">
+            <h2 className="text-base font-bold text-slate-800 tracking-tight flex items-center gap-2">
+              <Layers className="h-4 w-4 text-sky-700" />
+              Filtrer par Filière / Catégorie
+            </h2>
+            {selectedCategory && (
+              <span className="text-xs font-medium text-slate-500">
+                Filière sélectionnée: <strong className="text-sky-700">{selectedCategory.name}</strong>
+              </span>
+            )}
           </div>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight text-white">
-            Tableau de Bord & Suivi des Modules
-          </h1>
-          <p className="text-sm text-blue-100/90 leading-relaxed font-normal pt-1.5 max-w-2xl">
-            Visualisez vos modules en cours, vos cours terminés, suivez votre progression et accédez directement à vos parcours de formation.
-          </p>
+          <Suspense fallback={null}>
+            <Categories items={categories} />
+          </Suspense>
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <InfoCard
-          icon={Clock}
-          label="Modules en cours"
-          numberOfItems={coursesInProgress.length}
-        />
-        <InfoCard
-          icon={CheckCircle}
-          label="Modules terminés"
-          numberOfItems={completedCourses.length}
-          variant="success"
-        />
-      </div>
+        {/* Courses Section */}
+        <div id="modules-section" className="space-y-4 pt-2 scroll-mt-24">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-bold text-slate-900 tracking-tight">
+                {selectedCategory ? `Modules en ${selectedCategory.name}` : title ? `Résultats pour "${title}"` : "Tous les Modules de Formation"}
+              </h2>
+              <span className="bg-sky-50 text-sky-700 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-sky-200">
+                {courses.length} {courses.length === 1 ? "module" : "modules"}
+              </span>
+            </div>
+          </div>
 
-      {/* Interactive Search & Filter Bar */}
-      <Suspense fallback={null}>
-        <DashboardFilters categories={categories} />
-      </Suspense>
-
-      <div className="space-y-4 pt-2">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-slate-800 tracking-tight">
-            Mes Modules d'Apprentissage
-          </h2>
-          <span className="bg-sky-50 text-sky-700 text-xs font-semibold px-3 py-1 rounded-full border border-sky-200">
-            {displayedCourses.length} {displayedCourses.length === 1 ? "module" : "modules"}
-          </span>
+          <CoursesList items={courses} />
         </div>
-        <CoursesList items={displayedCourses} />
       </div>
     </div>
   );

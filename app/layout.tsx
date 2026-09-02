@@ -18,7 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full antialiased scroll-smooth">
       <body className="min-h-full flex flex-col font-sans bg-white text-slate-900">
-        <ClerkProvider proxyUrl="/__clerk">
+        <ClerkProvider>
           <ConfettiProvider />
           <ToastProvider />
           {children}

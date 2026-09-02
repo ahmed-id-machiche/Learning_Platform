@@ -6,6 +6,7 @@ import Link from "next/link";
 import { UserButton, useAuth } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 import { isTeacher } from "@/lib/teacher";
+import { StudentFiliereSelector } from "@/components/student-filiere-selector";
 
 export const NavbarRoutes = () => {
   const pathname = usePathname();
@@ -15,7 +16,12 @@ export const NavbarRoutes = () => {
   const isPlayerPage = pathname?.includes("/chapter");
 
   return (
-    <div className="flex items-center gap-x-3 ml-auto shrink-0">
+    <div className="flex items-center gap-x-3 ml-auto shrink-0 font-sans">
+      {/* Student Filière Selector Badge & Auto Onboarding Trigger */}
+      {userId && !isTeacherPage && !isPlayerPage && (
+        <StudentFiliereSelector />
+      )}
+
       {isTeacherPage || isPlayerPage ? (
         <Link href="/">
           <Button size="sm" variant="ghost" className="text-slate-700 hover:text-slate-900 font-semibold rounded-xl">
@@ -33,7 +39,7 @@ export const NavbarRoutes = () => {
 
       {!userId ? (
         <Link href="/sign-in">
-          <Button size="sm" className="bg-sky-700 hover:bg-sky-800 text-white font-bold px-4 rounded-xl shadow-xs flex items-center gap-1.5">
+          <Button size="sm" className="bg-purple-700 hover:bg-purple-800 text-white font-bold px-4 rounded-xl shadow-xs flex items-center gap-1.5">
             <LogIn className="h-4 w-4" />
             <span>Se Connecter</span>
           </Button>
@@ -44,4 +50,3 @@ export const NavbarRoutes = () => {
     </div>
   );
 };
-

@@ -12,7 +12,6 @@ import {
   Calendar,
   FileText,
   Award,
-  Sparkles,
   ArrowRight,
 } from "lucide-react";
 

@@ -44,22 +44,19 @@ export const CategoryItem = ({
     <button
       onClick={onClick}
       className={cn(
-        "relative py-2 px-3 text-sm font-medium rounded-full flex items-center gap-x-1.5 whitespace-nowrap transition-all duration-200 select-none cursor-pointer border shrink-0",
+        "relative py-2 px-4 text-xs lg:text-sm font-semibold rounded-full flex items-center gap-x-2 whitespace-nowrap transition-all duration-150 select-none cursor-pointer border shrink-0",
         isSelected
-          ? "border-sky-700 bg-sky-200/20 text-sky-800 font-semibold shadow-xs"
-          : "border-slate-200 bg-white text-slate-600 hover:border-sky-700 hover:text-sky-700 hover:bg-sky-50/40"
+          ? "border-slate-900 bg-slate-900 text-white font-bold shadow-sm"
+          : "border-slate-300 bg-white text-slate-800 hover:bg-slate-100 hover:border-slate-400"
       )}
       type="button"
     >
       {Icon && (
-        <span className={cn("p-0.5 rounded transition-transform", isSelected ? "text-sky-700" : "text-slate-500")}>
-          <Icon size={18} />
+        <span className={cn(isSelected ? "text-purple-300" : "text-slate-500")}>
+          <Icon size={16} />
         </span>
       )}
       <span>{label}</span>
-      {isSelected && (
-        <span className="h-1.5 w-1.5 rounded-full bg-sky-700 ml-0.5"></span>
-      )}
     </button>
   );
 };

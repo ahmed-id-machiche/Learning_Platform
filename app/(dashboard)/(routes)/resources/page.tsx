@@ -4,15 +4,11 @@ import { Suspense } from "react";
 import {
   FileCheck,
   FileText,
-  Download,
   BookOpen,
-  Sparkles,
   Award,
 } from "lucide-react";
 
 import { db } from "@/lib/db";
-import Link from "next/link";
-import { Breadcrumbs } from "@/components/breadcrumb";
 import { PdfDownloadButton } from "@/components/pdf-download-button";
 import { ResourceFilters } from "./_components/resource-filters";
 
@@ -77,25 +73,25 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
       case "EFM_EXAM":
         return {
           label: "EFM Corrigé",
-          className: "bg-amber-100 text-amber-800 border-amber-200",
+          className: "bg-amber-50 text-amber-800 border-amber-200",
           icon: Award,
         };
       case "TP_CORRIGE":
         return {
           label: "TP Corrigé",
-          className: "bg-emerald-100 text-emerald-800 border-emerald-200",
+          className: "bg-emerald-50 text-emerald-800 border-emerald-200",
           icon: FileCheck,
         };
       case "TP_SUJET":
         return {
           label: "Sujet TP",
-          className: "bg-sky-100 text-sky-800 border-sky-200",
+          className: "bg-sky-50 text-sky-800 border-sky-200",
           icon: FileText,
         };
       case "COURSE_PDF":
         return {
           label: "Support PDF",
-          className: "bg-indigo-100 text-indigo-800 border-indigo-200",
+          className: "bg-purple-50 text-purple-800 border-purple-200",
           icon: BookOpen,
         };
       default:
@@ -108,19 +104,17 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
   };
 
   return (
-    <div className="p-6 space-y-6 max-w-[1600px] mx-auto pb-12">
-      {/* Hero Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-700 via-indigo-700 to-violet-800 p-8 text-white shadow-xl min-h-[170px] flex items-center">
-        {/* Subtle ambient lighting glows */}
-        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-80 h-80 rounded-full bg-white/10 blur-2xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/3 -mb-16 w-72 h-72 rounded-full bg-sky-400/20 blur-3xl pointer-events-none" />
+    <div className="max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 font-sans">
+      {/* Udemy Style Hero Header */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-purple-900 via-indigo-900 to-slate-900 p-8 text-white shadow-xl min-h-[170px] flex items-center border border-purple-800/40">
+        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-80 h-80 rounded-full bg-purple-500/10 blur-2xl pointer-events-none" />
 
         <div className="relative z-10 space-y-2 max-w-2xl">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight text-white">
-            EFMs & Travaux Pratiques Corrigés
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight leading-tight text-white">
+            Documents & EFM Corrigés
           </h1>
-          <p className="text-sm text-blue-100/90 leading-relaxed font-normal pt-1.5 max-w-2xl">
-            Téléchargez les sujets d'EFM régionaux et nationaux, les corrigés de TPs et les supports de cours au format PDF pour réussir vos évaluations.
+          <p className="text-sm text-purple-100/80 leading-relaxed font-medium pt-1 max-w-2xl">
+            Téléchargez les sujets d'EFM régionaux et nationaux, les corrigés de TPs et les supports de cours au format PDF pour les filières TSGE et TAA.
           </p>
         </div>
       </div>
@@ -153,7 +147,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
               return (
                 <div
                   key={attachment.id}
-                  className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs hover:shadow-md hover:border-sky-300 transition flex flex-col justify-between space-y-4 group"
+                  className="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs hover:shadow-xl hover:border-purple-300 transition duration-300 flex flex-col justify-between space-y-4 group"
                 >
                   <div className="space-y-3">
                     {/* Top Row: Type Badge + Module Code */}
@@ -166,18 +160,18 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
                       </span>
 
                       {attachment.course.moduleCode ? (
-                        <span className="bg-emerald-600 text-white font-mono font-bold text-[11px] px-2 py-0.5 rounded shadow-xs">
+                        <span className="bg-slate-900 text-white font-mono font-bold text-[11px] px-2 py-0.5 rounded shadow-xs">
                           {attachment.course.moduleCode}
                         </span>
                       ) : (
-                        <span className="bg-sky-700 text-white font-mono font-bold text-[11px] px-2 py-0.5 rounded shadow-xs">
+                        <span className="bg-purple-700 text-white font-mono font-bold text-[11px] px-2 py-0.5 rounded shadow-xs">
                           OFPPT
                         </span>
                       )}
                     </div>
 
                     {/* Document Title */}
-                    <h3 className="text-base font-bold text-slate-900 group-hover:text-sky-700 transition line-clamp-2 leading-snug">
+                    <h3 className="text-base font-bold text-slate-900 group-hover:text-purple-700 transition line-clamp-2 leading-snug">
                       {attachment.name}
                     </h3>
 
@@ -187,7 +181,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
                         Module: {attachment.course.title}
                       </div>
                       {attachment.course.filiere && (
-                        <div className="text-[11px] text-emerald-800 font-medium bg-emerald-50 px-2 py-0.5 rounded inline-block">
+                        <div className="text-[11px] text-purple-800 font-medium bg-purple-50 px-2 py-0.5 rounded inline-block">
                           {attachment.course.filiere}
                         </div>
                       )}
