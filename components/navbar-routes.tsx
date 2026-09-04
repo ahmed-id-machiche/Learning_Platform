@@ -17,8 +17,8 @@ export const NavbarRoutes = () => {
 
   return (
     <div className="flex items-center gap-x-3 ml-auto shrink-0 font-sans">
-      {/* Student Filière Selector Badge & Auto Onboarding Trigger */}
-      {userId && !isTeacherPage && !isPlayerPage && (
+      {/* Student Filière Selector Badge & Auto Onboarding Trigger (Students only) */}
+      {userId && !isTeacher(userId) && !isTeacherPage && !isPlayerPage && (
         <StudentFiliereSelector />
       )}
 

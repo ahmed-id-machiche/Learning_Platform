@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { GraduationCap, Edit2 } from "lucide-react";
 import axios from "axios";
+import { useAuth } from "@clerk/nextjs";
 
 import { StudentFiliereModal } from "@/components/modals/student-filiere-modal";
 import { OFPPT_FILIERES } from "@/lib/ofppt-constants";
+import { isTeacher } from "@/lib/teacher";
 
 interface StudentFiliereSelectorProps {
   initialProfile?: {
@@ -17,6 +19,9 @@ interface StudentFiliereSelectorProps {
 export const StudentFiliereSelector = ({
   initialProfile,
 }: StudentFiliereSelectorProps) => {
+  const { userId } = useAuth();
+  const isTeacherUser = isTeacher(userId);
+
   const [profile, setProfile] = useState<{ year: string; filiere: string } | null>(
     initialProfile || null
   );
@@ -24,6 +29,8 @@ export const StudentFiliereSelector = ({
   const [hasLoaded, setHasLoaded] = useState(false);
 
   useEffect(() => {
+    if (isTeacherUser) return;
+
     const fetchProfile = async () => {
       try {
         const res = await axios.get("/api/user/profile");
@@ -43,14 +50,19 @@ export const StudentFiliereSelector = ({
     } else {
       fetchProfile();
     }
-  }, [initialProfile]);
+  }, [initialProfile, isTeacherUser]);
 
-  // Open modal automatically if user logged in but has no profile set yet
+  // Open modal automatically ONLY for students who haven't selected their year & filière yet
   useEffect(() => {
-    if (hasLoaded && !profile) {
+    if (!isTeacherUser && hasLoaded && !profile) {
       setIsOpen(true);
     }
-  }, [hasLoaded, profile]);
+  }, [hasLoaded, profile, isTeacherUser]);
+
+  // Teachers never see or get prompted for student year/filiere
+  if (isTeacherUser) {
+    return null;
+  }
 
   const matchedFiliereObj = OFPPT_FILIERES.find(
     (f) => f.value === profile?.filiere
