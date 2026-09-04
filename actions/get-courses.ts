@@ -1,5 +1,4 @@
 import { Category, Course } from "@prisma/client";
-
 import { db } from "@/lib/db";
 
 type CourseWithProgressWithCategory = Course & {
@@ -13,6 +12,50 @@ type GetCourses = {
   title?: string;
   categoryId?: string;
 };
+
+export function isCourseVisibleToStudent(
+  courseFiliere: string | null | undefined,
+  studentYear?: string | null,
+  studentFiliere?: string | null
+): boolean {
+  if (!courseFiliere || courseFiliere.trim() === "" || courseFiliere.toLowerCase().includes("général") || courseFiliere.toLowerCase().includes("general")) {
+    return true; // General course, visible to all
+  }
+
+  if (!studentFiliere) {
+    return true; // No profile filter set, visible
+  }
+
+  const normalizedCourseFiliere = courseFiliere.toLowerCase().replace(/[-_]/g, " ").trim();
+  const normalizedStudentFiliere = studentFiliere.toLowerCase().replace(/[-_]/g, " ").trim();
+
+  // Check year indicators
+  const isCourseFirstYear = normalizedCourseFiliere.includes("1ère") || normalizedCourseFiliere.includes("1ere") || normalizedCourseFiliere.includes("1er");
+  const isStudentFirstYear = studentYear ? (studentYear.includes("1ère") || studentYear.includes("1ere") || studentYear.includes("1er")) : (normalizedStudentFiliere.includes("1ère") || normalizedStudentFiliere.includes("1ere") || normalizedStudentFiliere.includes("1er"));
+
+  if (isStudentFirstYear) {
+    // 1ère Année student MUST NOT see 2ème Année courses!
+    if (!isCourseFirstYear) return false;
+
+    // Must match TSGE vs TAA Tronc Commun
+    if (normalizedStudentFiliere.includes("tsge") && !normalizedCourseFiliere.includes("tsge")) return false;
+    if (normalizedStudentFiliere.includes("taa") && !normalizedCourseFiliere.includes("taa")) return false;
+    return true;
+  } else {
+    // 2ème Année student MUST NOT see 1ère Année courses!
+    if (isCourseFirstYear) return false;
+
+    // Extract option identifiers (e.g. "cf", "cm", "om", "rh", "comptabilite", "gestion")
+    const studentTokens = normalizedStudentFiliere.split(" ").filter(t => t.length >= 2);
+    const courseTokens = normalizedCourseFiliere.split(" ").filter(t => t.length >= 2);
+
+    const optionMatches = studentTokens.some(st => 
+      courseTokens.some(ct => ct === st || ct.includes(st) || st.includes(ct))
+    );
+
+    return optionMatches;
+  }
+}
 
 export const getCourses = async ({
   userId,
@@ -35,6 +78,11 @@ export const getCourses = async ({
       title.trim() !== ""
         ? title.trim()
         : undefined;
+
+    // Fetch student profile for automatic year & filière filtering
+    const studentProfile = userId
+      ? await db.studentProfile.findUnique({ where: { userId } }).catch(() => null)
+      : null;
 
     const courses = await db.course.findMany({
       where: {
@@ -69,8 +117,14 @@ export const getCourses = async ({
       },
     });
 
+    // Filter courses based on student's year and filière
+    const filteredCourses = courses.filter((course) => {
+      if (!studentProfile) return true;
+      return isCourseVisibleToStudent(course.filiere, studentProfile.year, studentProfile.filiere);
+    });
+
     const coursesWithProgress: CourseWithProgressWithCategory[] = await Promise.all(
-      courses.map(async (course) => {
+      filteredCourses.map(async (course) => {
         const purchases = course.purchases || [];
         const isFree = course.isFree ?? (course.price === null || course.price === 0);
         const hasAccess = isFree || purchases.length > 0;
@@ -112,7 +166,6 @@ export const getCourses = async ({
     return coursesWithProgress;
   } catch (error) {
     console.log("[GET_COURSES_ERROR]", error);
-    // Fallback: Query published courses directly without progress map if map fails
     try {
       const fallbackCourses = await db.course.findMany({
         where: { isPublished: true },

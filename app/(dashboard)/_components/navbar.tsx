@@ -2,7 +2,6 @@ import { Logo } from "./logo";
 import { TopNavLinks } from "./top-nav-links";
 import { MobileSidebar } from "./mobile-sidebar";
 import { NavbarRoutes } from "@/components/navbar-routes";
-import { SearchInput } from "@/components/search-input";
 
 export const Navbar = () => {
   return (
@@ -18,13 +17,8 @@ export const Navbar = () => {
         <TopNavLinks />
       </div>
 
-      {/* 3. Center: Udemy-style Search Bar */}
-      <div className="hidden md:flex items-center justify-center flex-1 max-w-xl mx-2">
-        <SearchInput />
-      </div>
-
-      {/* 4. Right: Mode Formateur & Profile */}
-      <div className="flex items-center shrink-0">
+      {/* 3. Right: Mode Formateur & Profile */}
+      <div className="flex items-center shrink-0 ml-auto">
         <NavbarRoutes />
       </div>
     </div>

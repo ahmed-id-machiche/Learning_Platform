@@ -7,6 +7,7 @@ export interface FiliereOption {
   parentFiliere: "TSGE" | "TAA";
   year: AcademicYear;
   description?: string;
+  imageUrl?: string;
 }
 
 export const ACADEMIC_YEARS: AcademicYear[] = ["1ère Année", "2ème Année"];
@@ -20,6 +21,7 @@ export const OFPPT_FILIERES: FiliereOption[] = [
     parentFiliere: "TSGE",
     year: "1ère Année",
     description: "Technicien Spécialisé en Gestion des Entreprises - Tronc Commun",
+    imageUrl: "/images/filiere-courses/tsge-1ere-annee.jpg",
   },
   {
     value: "1ère Année TAA",
@@ -28,6 +30,7 @@ export const OFPPT_FILIERES: FiliereOption[] = [
     parentFiliere: "TAA",
     year: "1ère Année",
     description: "Technicien en Administration & Assistanat - Tronc Commun",
+    imageUrl: "/images/filiere-courses/taa-1ere-annee.jpg",
   },
 
   // 2ème Année - TSGE Options (Exact folder names from curriculum)
@@ -38,6 +41,7 @@ export const OFPPT_FILIERES: FiliereOption[] = [
     parentFiliere: "TSGE",
     year: "2ème Année",
     description: "Spécialisation Comptabilité et Finance",
+    imageUrl: "/images/filiere-courses/tsge-cf.jpg",
   },
   {
     value: "TSGE CM",
@@ -46,6 +50,7 @@ export const OFPPT_FILIERES: FiliereOption[] = [
     parentFiliere: "TSGE",
     year: "2ème Année",
     description: "Spécialisation Commerce et Marketing",
+    imageUrl: "/images/filiere-courses/tsge-cm.jpg",
   },
   {
     value: "TSGE OM",
@@ -54,6 +59,7 @@ export const OFPPT_FILIERES: FiliereOption[] = [
     parentFiliere: "TSGE",
     year: "2ème Année",
     description: "Spécialisation Organisation et Management",
+    imageUrl: "/images/filiere-courses/tsge-om.jpg",
   },
   {
     value: "TSGE RH",
@@ -62,6 +68,7 @@ export const OFPPT_FILIERES: FiliereOption[] = [
     parentFiliere: "TSGE",
     year: "2ème Année",
     description: "Spécialisation Gestion des Ressources Humaines",
+    imageUrl: "/images/filiere-courses/tsge-rh.jpg",
   },
 
   // 2ème Année - TAA Options (Exact folder names from curriculum)
@@ -72,6 +79,7 @@ export const OFPPT_FILIERES: FiliereOption[] = [
     parentFiliere: "TAA",
     year: "2ème Année",
     description: "Technicien en Administration option Comptabilité",
+    imageUrl: "/images/filiere-courses/taa-comptabilite.jpg",
   },
   {
     value: "TAA Gestion",
@@ -80,6 +88,7 @@ export const OFPPT_FILIERES: FiliereOption[] = [
     parentFiliere: "TAA",
     year: "2ème Année",
     description: "Technicien en Administration option Gestion",
+    imageUrl: "/images/filiere-courses/taa-gestion.jpg",
   },
 ];
 

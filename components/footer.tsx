@@ -1,18 +1,19 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export const Footer = () => {
+  const pathname = usePathname();
+
+  // Hide footer on Formateur / Admin pages (/teacher/*)
+  if (pathname?.startsWith("/teacher")) {
+    return null;
+  }
+
   return (
     <footer className="bg-[#1c1d1f] text-[#cea0ed] font-sans border-t border-[#2d2f31] mt-auto">
-      {/* 1. Udemy Top Banner: Trust Banner */}
-      <div className="border-b border-[#2d2f31] py-5">
-        <div className="max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4 text-xs sm:text-sm">
-          <div className="font-bold text-[#f7f9fa]">
-            Les formateurs et stagiaires l'OFPPT font confiance à <span className="text-purple-400">OFPPT Learning Platform</span> pour développer leurs compétences.
-          </div>
-        </div>
-      </div>
-
-      {/* 2. Udemy Main Columns Content */}
+      {/* Main Columns Content */}
       <div className="max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
         {/* Section Title */}
         <div>
@@ -143,7 +144,7 @@ export const Footer = () => {
         </div>
       </div>
 
-      {/* 3. Bottom Bar: Clean Copyright */}
+      {/* Bottom Bar: Clean Copyright */}
       <div className="border-t border-[#2d2f31] py-6">
         <div className="max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-400 font-normal">
           © {new Date().getFullYear()} <strong>OFPPT Learning Platform</strong> • Propriété de <strong>HASSAN ID MACHICHE</strong>. Tous droits réservés. (All rights reserved).

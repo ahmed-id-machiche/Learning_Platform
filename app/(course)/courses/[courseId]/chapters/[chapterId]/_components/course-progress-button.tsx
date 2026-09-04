@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import { CheckCircle, XCircle } from "lucide-react";
+import { CheckCircle2, RotateCcw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -39,36 +39,46 @@ export const CourseProgressButton = ({
 
       if (!isCompleted && !nextChapterId) {
         confetti.onOpen();
-        toast.success("Module terminé ! Redirection vers le catalogue...");
+        toast.success("Félicitations ! Vous avez terminé ce module OFPPT ! 🎉");
         router.refresh();
-        router.push("/search");
+        router.push("/");
       } else if (!isCompleted && nextChapterId) {
-        toast.success("Progression enregistrée");
+        toast.success("Cours validé ! Passage au chapitre suivant...");
         router.refresh();
         router.push(`/courses/${courseId}/chapters/${nextChapterId}`);
       } else {
-        toast.success("Progression enregistrée");
+        toast.success("Statut du cours mis à jour.");
         router.refresh();
       }
     } catch {
-      toast.error("Une erreur est survenue");
+      toast.error("Une erreur s'est produite lors de la sauvegarde.");
     } finally {
       setIsLoading(false);
     }
   };
-
-  const Icon = isCompleted ? XCircle : CheckCircle;
 
   return (
     <Button
       onClick={onClick}
       disabled={isLoading}
       type="button"
-      variant={isCompleted ? "outline" : "success"}
-      className="w-full md:w-auto font-medium"
+      className={`w-full sm:w-auto font-black text-xs px-5 py-2.5 rounded-xl shadow-md transition-all cursor-pointer flex items-center gap-2 ${
+        isCompleted
+          ? "bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300"
+          : "bg-purple-700 hover:bg-purple-800 text-white"
+      }`}
     >
-      {isCompleted ? "Marquer non terminé" : "Marquer comme terminé"}
-      <Icon className="h-4 w-4 ml-2" />
+      {isCompleted ? (
+        <>
+          <RotateCcw className="h-4 w-4 text-slate-500" />
+          <span>Marquer comme non lu</span>
+        </>
+      ) : (
+        <>
+          <CheckCircle2 className="h-4 w-4" />
+          <span>J'ai lu ce cours (Terminer)</span>
+        </>
+      )}
     </Button>
   );
 };

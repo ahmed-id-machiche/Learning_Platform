@@ -8,16 +8,18 @@ const db = new PrismaClient({ adapter });
 
 async function main() {
   try {
-    console.log("Seeding OFPPT Commerce & Gestion Categories & Modules...");
+    console.log("Seeding OFPPT Filières & Course Covers...");
 
-    // 1. Seed Commerce & Gestion Categories
+    // 1. Seed Official OFPPT Filières as Categories
     const categoriesData = [
-      { name: "Gestion des Entreprises" },
-      { name: "Commerce Digital & Marketing" },
-      { name: "Comptabilité & Finance" },
-      { name: "Logistique & Transport" },
-      { name: "Techniques de Vente" },
-      { name: "Administration & RH" },
+      { name: "1ère Année TSGE" },
+      { name: "1ère Année TAA" },
+      { name: "TSGE CF" },
+      { name: "TSGE CM" },
+      { name: "TSGE OM" },
+      { name: "TSGE RH" },
+      { name: "TAA Comptabilité" },
+      { name: "TAA Gestion" },
     ];
 
     for (const cat of categoriesData) {
@@ -31,190 +33,143 @@ async function main() {
     const categories = await db.category.findMany();
     const catMap = new Map(categories.map((c) => [c.name, c.id]));
 
-    // 2. Seed OFPPT Courses for Commerce & Gestion
-    const dummyUserId = "user_ofppt_teacher_01"; // Generic teacher ID
+    // 2. Update existing modules to exact filières and default images
+    const dummyUserId = "user_ofppt_teacher_01";
 
     const coursesData = [
-      // --- 1ère Année TSGE & TAA Tronc Commun ---
+      // 1ère Année TSGE
       {
         title: "M101: Métier et Démarche de Formation (TSGE & TAA)",
         moduleCode: "M101",
-        filiere: "TSGE Tronc Commun",
+        filiere: "1ère Année TSGE",
         niveau: "1ère Année",
         description: "Comprendre les exigences du secteur tertiaire, l'organisation de l'OFPPT et la démarche d'apprentissage professionnelle.",
-        imageUrl: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80",
+        imageUrl: "/images/filiere-courses/tsge-1ere-annee.jpg",
         isPublished: true,
         isFree: true,
-        categoryId: catMap.get("Gestion des Entreprises"),
-        chapters: [
-          { title: "Chapitre 1: Présentation du secteur Tertiaire et OFPPT", position: 1, isPublished: true },
-          { title: "Chapitre 2: Analyse des compétences requises en entreprise", position: 2, isPublished: true },
-          { title: "Chapitre 3: Projet professionnel et méthode de travail", position: 3, isPublished: true },
-        ],
+        categoryId: catMap.get("1ère Année TSGE"),
       },
       {
         title: "M102: Comptabilité Générale - Fondamentaux",
         moduleCode: "M102",
-        filiere: "TSGE Tronc Commun",
+        filiere: "1ère Année TSGE",
         niveau: "1ère Année",
         description: "Maîtriser les principes fondamentaux du Bilan, du CPC, des écritures comptables et du journal selon le Plan Comptable Général Marocain (CGNC).",
-        imageUrl: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80",
+        imageUrl: "/images/filiere-courses/tsge-1ere-annee.jpg",
         isPublished: true,
         isFree: true,
-        categoryId: catMap.get("Comptabilité & Finance"),
-        chapters: [
-          { title: "Chapitre 1: Le Bilan et le Compte de Produits et Charges (CPC)", position: 1, isPublished: true },
-          { title: "Chapitre 2: L'analyse des comptes et la comptabilité en partie double", position: 2, isPublished: true },
-          { title: "Chapitre 3: Enregistrement au Journal et Grand Livre", position: 3, isPublished: true },
-        ],
+        categoryId: catMap.get("1ère Année TSGE"),
       },
+      // 1ère Année TAA
       {
         title: "M103: Secrétariat & Bureautique Administrative (TAA)",
-        moduleCode: "M103-TAA",
-        filiere: "TAA Tronc Commun",
+        moduleCode: "M103",
+        filiere: "1ère Année TAA",
         niveau: "1ère Année",
         description: "Gestion des appels, organisation du courrier, traitement de texte Word & Excel pour assistants administratifs.",
-        imageUrl: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80",
+        imageUrl: "/images/filiere-courses/taa-1ere-annee.jpg",
         isPublished: true,
         isFree: true,
-        categoryId: catMap.get("Administration & RH"),
-        chapters: [
-          { title: "Chapitre 1: Accueil et Communication Téléphonique", position: 1, isPublished: true },
-          { title: "Chapitre 2: Gestion du courrier et classement documentaire", position: 2, isPublished: true },
-          { title: "Chapitre 3: Bureautique essentielle Word & Excel", position: 3, isPublished: true },
-        ],
+        categoryId: catMap.get("1ère Année TAA"),
       },
-
-      // --- 2ème Année TSGE Options ---
+      // TSGE CF
       {
         title: "M201: Comptabilité Approfondie & Fiscalité (TSGE-CF)",
         moduleCode: "M201",
-        filiere: "TSGE - CF",
+        filiere: "TSGE CF",
         niveau: "2ème Année",
         description: "Diagnostic financier, fiscalité de l'entreprise (IS, TVA, IR) et comptabilité de clôture des travaux de fin d'exercice.",
-        imageUrl: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80",
+        imageUrl: "/images/filiere-courses/tsge-cf.jpg",
         isPublished: true,
         isFree: true,
-        categoryId: catMap.get("Comptabilité & Finance"),
-        chapters: [
-          { title: "Chapitre 1: Déclarations et Calcul de la TVA & Impôts", position: 1, isPublished: true },
-          { title: "Chapitre 2: Amortissements et Provisions pour dépréciation", position: 2, isPublished: true },
-          { title: "Chapitre 3: Bilan Financier et Diagnostic des SIG", position: 3, isPublished: true },
-        ],
+        categoryId: catMap.get("TSGE CF"),
       },
+      // TSGE CM
       {
         title: "M202: Marketing Stratégique & Force de Vente (TSGE-CM)",
         moduleCode: "M202",
-        filiere: "TSGE - CM",
+        filiere: "TSGE CM",
         niveau: "2ème Année",
         description: "Stratégie de prospection, négociation commerciale, gestion de la relation client (CRM) et études de marché.",
-        imageUrl: "https://images.unsplash.com/photo-1533750349088-cd871a92f312?auto=format&fit=crop&w=800&q=80",
+        imageUrl: "/images/filiere-courses/tsge-cm.jpg",
         isPublished: true,
         isFree: true,
-        categoryId: catMap.get("Commerce Digital & Marketing"),
-        chapters: [
-          { title: "Chapitre 1: Stratégie de Prospection & Négociation", position: 1, isPublished: true },
-          { title: "Chapitre 2: Fidélisation Client & Outils CRM", position: 2, isPublished: true },
-        ],
+        categoryId: catMap.get("TSGE CM"),
       },
+      // TSGE OM
       {
         title: "M203: Assistanat de Direction & Office Manager (TSGE-OM)",
         moduleCode: "M203",
-        filiere: "TSGE - OM",
+        filiere: "TSGE OM",
         niveau: "2ème Année",
         description: "Organisation de réunions de direction, gestion des agendas complexes, rédaction de comptes-rendus et suivi des budgets de service.",
-        imageUrl: "https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=800&q=80",
+        imageUrl: "/images/filiere-courses/tsge-om.jpg",
         isPublished: true,
         isFree: true,
-        categoryId: catMap.get("Administration & RH"),
-        chapters: [
-          { title: "Chapitre 1: Organisation des Réunions et Événements", position: 1, isPublished: true },
-          { title: "Chapitre 2: Rédaction Administrative Avancée", position: 2, isPublished: true },
-        ],
+        categoryId: catMap.get("TSGE OM"),
       },
+      // TSGE RH
       {
         title: "M204: Gestion du Personnel & Droit Social (TSGE-RH)",
         moduleCode: "M204",
-        filiere: "TSGE - RH",
+        filiere: "TSGE RH",
         niveau: "2ème Année",
         description: "Traitement de la paie, contrats de travail, gestion prévisionnelle des emplois (GPEC) et législation sociale marocaine.",
-        imageUrl: "https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=800&q=80",
+        imageUrl: "/images/filiere-courses/tsge-rh.jpg",
         isPublished: true,
         isFree: true,
-        categoryId: catMap.get("Administration & RH"),
-        chapters: [
-          { title: "Chapitre 1: Calcul des Salaires et Bulletin de Paie", position: 1, isPublished: true },
-          { title: "Chapitre 2: Recrutement & Évaluation des Compétences", position: 2, isPublished: true },
-        ],
+        categoryId: catMap.get("TSGE RH"),
       },
-
-      // --- 2ème Année TAA Options ---
+      // TAA Comptabilité
       {
         title: "M205: Travaux de Fin d'Exercice & Paie (TAA-Comptabilité)",
         moduleCode: "M205",
-        filiere: "TAA - Comptabilité",
+        filiere: "TAA Comptabilité",
         niveau: "2ème Année",
         description: "Pratique de la comptabilité courante, travaux d'inventaire et préparation des bulletins de paie pour assistants comptables.",
-        imageUrl: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80",
+        imageUrl: "/images/filiere-courses/taa-comptabilite.jpg",
         isPublished: true,
         isFree: true,
-        categoryId: catMap.get("Comptabilité & Finance"),
-        chapters: [
-          { title: "Chapitre 1: Saisie des Factures et Journaux Auxiliaires", position: 1, isPublished: true },
-          { title: "Chapitre 2: Déclaration des Charges Sociales & Paie", position: 2, isPublished: true },
-        ],
+        categoryId: catMap.get("TAA Comptabilité"),
       },
+      // TAA Gestion
       {
         title: "M206: Gestion Administrative & Stocks (TAA-Gestion)",
         moduleCode: "M206",
-        filiere: "TAA - Gestion",
+        filiere: "TAA Gestion",
         niveau: "2ème Année",
         description: "Suivi des approvisionnements, gestion des bons de commande/livraison et administration des ventes en entreprise.",
-        imageUrl: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80",
+        imageUrl: "/images/filiere-courses/taa-gestion.jpg",
         isPublished: true,
         isFree: true,
-        categoryId: catMap.get("Gestion des Entreprises"),
-        chapters: [
-          { title: "Chapitre 1: Suivi des Commandes et Bons de Livraison", position: 1, isPublished: true },
-          { title: "Chapitre 2: Gestion des Inventaires et Stocks", position: 2, isPublished: true },
-        ],
+        categoryId: catMap.get("TAA Gestion"),
       },
     ];
 
     for (const c of coursesData) {
       const existingCourse = await db.course.findFirst({
-        where: { title: c.title },
+        where: {
+          OR: [
+            { title: { contains: c.moduleCode } },
+            { moduleCode: c.moduleCode },
+          ],
+        },
       });
 
-      if (!existingCourse) {
-        await db.course.create({
-          data: {
-            userId: dummyUserId,
-            title: c.title,
-            moduleCode: c.moduleCode,
-            filiere: c.filiere,
-            niveau: c.niveau,
-            description: c.description,
-            imageUrl: c.imageUrl,
-            isPublished: c.isPublished,
-            isFree: c.isFree,
-            categoryId: c.categoryId,
-            chapters: {
-              create: c.chapters,
-            },
-          },
-        });
-      } else {
+      if (existingCourse) {
         await db.course.update({
           where: { id: existingCourse.id },
           data: {
+            filiere: c.filiere,
+            niveau: c.niveau,
             imageUrl: c.imageUrl,
+            categoryId: c.categoryId,
           },
         });
       }
     }
 
-    console.log("OFPPT Commerce & Gestion modules seeded successfully!");
+    console.log("OFPPT Filières and modules updated successfully!");
   } catch (error) {
     console.error("Error seeding OFPPT modules:", error);
   } finally {

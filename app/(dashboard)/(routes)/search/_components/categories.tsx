@@ -4,20 +4,13 @@ import { useRef, useState, useEffect } from "react";
 import { Category } from "@prisma/client";
 import { ChevronLeft, ChevronRight, LayoutGrid } from "lucide-react";
 import {
-  FcAdvertising,
   FcBriefcase,
+  FcSalesPerformance,
   FcCalculator,
   FcDepartment,
-  FcEngineering,
-  FcFilmReel,
-  FcGlobe,
-  FcMultipleDevices,
-  FcMusic,
-  FcOldTimeCamera,
   FcOrganization,
   FcRules,
-  FcSalesPerformance,
-  FcSportsMode,
+  FcMultipleDevices,
 } from "react-icons/fc";
 import { IconType } from "react-icons";
 
@@ -28,18 +21,14 @@ interface CategoriesProps {
 }
 
 const iconMap: Record<string, IconType> = {
-  "Gestion des Entreprises": FcBriefcase,
-  "Commerce Digital & Marketing": FcSalesPerformance,
-  "Comptabilité & Finance": FcCalculator,
-  "Logistique & Transport": FcGlobe,
-  "Techniques de Vente": FcAdvertising,
-  "Administration & RH": FcDepartment,
-  "Développement Digital": FcMultipleDevices,
-  "Infrastructure Digitale": FcOrganization,
-  Accounting: FcCalculator,
-  "Computer Science": FcMultipleDevices,
-  Engineering: FcEngineering,
-  "Web Development": FcMultipleDevices,
+  "1ère Année TSGE": FcBriefcase,
+  "1ère Année TAA": FcOrganization,
+  "TSGE CF": FcCalculator,
+  "TSGE CM": FcSalesPerformance,
+  "TSGE OM": FcRules,
+  "TSGE RH": FcDepartment,
+  "TAA Comptabilité": FcCalculator,
+  "TAA Gestion": FcBriefcase,
 };
 
 export const Categories = ({ items }: CategoriesProps) => {
@@ -70,12 +59,12 @@ export const Categories = ({ items }: CategoriesProps) => {
   };
 
   return (
-    <div className="relative group/carousel py-1">
+    <div className="relative group/carousel py-1 font-sans">
       {/* Left Scroll Button */}
       {showLeftArrow && (
         <button
           onClick={() => scroll("left")}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-20 h-9 w-9 rounded-full bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-md backdrop-blur-md flex items-center justify-center text-slate-700 dark:text-slate-200 hover:scale-110 hover:bg-slate-900 hover:text-white transition-all cursor-pointer"
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-20 h-9 w-9 rounded-full bg-white/90 shadow-md backdrop-blur-md flex items-center justify-center text-slate-700 hover:scale-110 hover:bg-purple-900 hover:text-white transition-all cursor-pointer border border-slate-200"
           aria-label="Scroll Left"
         >
           <ChevronLeft className="h-5 w-5" />
@@ -86,7 +75,7 @@ export const Categories = ({ items }: CategoriesProps) => {
       {showRightArrow && (
         <button
           onClick={() => scroll("right")}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-20 h-9 w-9 rounded-full bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-md backdrop-blur-md flex items-center justify-center text-slate-700 dark:text-slate-200 hover:scale-110 hover:bg-slate-900 hover:text-white transition-all cursor-pointer"
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-20 h-9 w-9 rounded-full bg-white/90 shadow-md backdrop-blur-md flex items-center justify-center text-slate-700 hover:scale-110 hover:bg-purple-900 hover:text-white transition-all cursor-pointer border border-slate-200"
           aria-label="Scroll Right"
         >
           <ChevronRight className="h-5 w-5" />
