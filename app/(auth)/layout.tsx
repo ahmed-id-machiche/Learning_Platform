@@ -32,13 +32,9 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
           </p>
         </div>
 
-        {/* Right Side: Floating White Card Form */}
-        <div className="lg:col-span-5 flex justify-center lg:justify-end w-full">
-          <div className="w-full max-w-md bg-white rounded-3xl p-4 sm:p-6 shadow-2xl border border-slate-100/80 backdrop-blur-xl min-h-[480px] flex flex-col items-center justify-center relative">
-            <div className="w-full flex items-center justify-center">
-              {children}
-            </div>
-          </div>
+        {/* Right Side: Auth Card Container */}
+        <div className="lg:col-span-5 flex justify-center lg:justify-end w-full min-h-[480px] items-center">
+          {children}
         </div>
 
       </div>
