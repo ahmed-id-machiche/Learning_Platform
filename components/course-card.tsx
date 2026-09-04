@@ -44,7 +44,7 @@ export const CourseCard = ({
               unoptimized
               className="object-cover group-hover:scale-105 transition-transform duration-300"
               alt={title}
-              src={imageUrl || "/placeholder.png"}
+              src={imageUrl || "/images/filiere-courses/tsge-1ere-annee.jpg"}
             />
 
             {/* Top Right: Free/Paid Access Badge */}

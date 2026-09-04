@@ -109,7 +109,7 @@ export const ImageForm = ({
                     }`}
                   >
                     <Image
-                      src={filiere.imageUrl || "/placeholder.png"}
+                      src={filiere.imageUrl || "/images/filiere-courses/tsge-1ere-annee.jpg"}
                       alt={filiere.shortName}
                       fill
                       unoptimized
