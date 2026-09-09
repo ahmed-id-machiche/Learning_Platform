@@ -8,17 +8,35 @@ import { usePathname } from "next/navigation";
 import { isTeacher } from "@/lib/teacher";
 import { StudentFiliereSelector } from "@/components/student-filiere-selector";
 
+import { useEffect, useState } from "react";
+import axios from "axios";
+
 export const NavbarRoutes = () => {
   const pathname = usePathname();
   const { userId } = useAuth();
+  const [pendingCount, setPendingCount] = useState<number>(0);
 
+  const isTeacherUser = isTeacher(userId);
   const isTeacherPage = pathname?.startsWith("/teacher");
   const isPlayerPage = pathname?.includes("/chapter");
+
+  useEffect(() => {
+    if (isTeacherUser) {
+      axios
+        .get("/api/students/pending-count")
+        .then((res) => {
+          if (typeof res.data?.count === "number") {
+            setPendingCount(res.data.count);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [isTeacherUser, pathname]);
 
   return (
     <div className="flex items-center gap-x-3 ml-auto shrink-0 font-sans">
       {/* Student Filière Selector Badge & Auto Onboarding Trigger (Students only) */}
-      {userId && !isTeacher(userId) && !isTeacherPage && !isPlayerPage && (
+      {userId && !isTeacherUser && !isTeacherPage && !isPlayerPage && (
         <StudentFiliereSelector />
       )}
 
@@ -29,14 +47,19 @@ export const NavbarRoutes = () => {
             <span>Quitter le Mode Formateur</span>
           </Button>
         </Link>
-      ) : isTeacher(userId) ? (
+      ) : isTeacherUser ? (
         <Link href="/teacher/courses">
           <Button
             size="sm"
-            className="bg-purple-700 hover:bg-purple-800 text-white font-black px-4 py-2 rounded-xl shadow-md transition-all flex items-center gap-2 text-xs border border-purple-600/40 cursor-pointer"
+            className="bg-purple-700 hover:bg-purple-800 text-white font-black px-4 py-2 rounded-xl shadow-md transition-all flex items-center gap-2 text-xs border border-purple-600/40 cursor-pointer relative"
           >
             <ShieldCheck className="h-4 w-4 text-purple-200" />
             <span>Mode Formateur</span>
+            {pendingCount > 0 && (
+              <span className="bg-amber-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full shadow-xs animate-pulse ml-0.5">
+                {pendingCount}
+              </span>
+            )}
           </Button>
         </Link>
       ) : null}

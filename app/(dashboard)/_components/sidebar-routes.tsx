@@ -65,6 +65,7 @@ const teacherRoutes = [
 export const SidebarRoutes = () => {
   const pathname = usePathname();
   const [announcementsCount, setAnnouncementsCount] = useState<number>(0);
+  const [pendingStudentsCount, setPendingStudentsCount] = useState<number>(0);
 
   const isTeacherPage = pathname?.includes("/teacher");
 
@@ -78,6 +79,15 @@ export const SidebarRoutes = () => {
           }
         })
         .catch(() => {});
+    } else {
+      axios
+        .get("/api/students/pending-count")
+        .then((res) => {
+          if (typeof res.data?.count === "number") {
+            setPendingStudentsCount(res.data.count);
+          }
+        })
+        .catch(() => {});
     }
   }, [isTeacherPage]);
 
@@ -85,15 +95,24 @@ export const SidebarRoutes = () => {
 
   return (
     <div className="flex flex-col w-full">
-      {routes.map((route) => (
-        <SidebarItem
-          key={route.href}
-          icon={route.icon}
-          label={route.label}
-          href={route.href}
-          badgeCount={route.href === "/announcements" ? announcementsCount : undefined}
-        />
-      ))}
+      {routes.map((route) => {
+        const badgeCount =
+          route.href === "/announcements"
+            ? announcementsCount
+            : route.href === "/teacher/students"
+            ? pendingStudentsCount
+            : undefined;
+
+        return (
+          <SidebarItem
+            key={route.href}
+            icon={route.icon}
+            label={route.label}
+            href={route.href}
+            badgeCount={badgeCount}
+          />
+        );
+      })}
     </div>
   );
 };

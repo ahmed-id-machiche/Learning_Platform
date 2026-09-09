@@ -54,33 +54,43 @@ const teacherRoutes = [
 export const TopNavLinks = () => {
   const pathname = usePathname();
   const [announcementsCount, setAnnouncementsCount] = useState<number>(0);
+  const [pendingStudentsCount, setPendingStudentsCount] = useState<number>(0);
 
   const isTeacherPage = pathname?.includes("/teacher");
 
-  const fetchUnreadCount = () => {
-    if (isTeacherPage) return;
+  const fetchCounts = () => {
+    if (isTeacherPage) {
+      axios
+        .get("/api/students/pending-count")
+        .then((res) => {
+          if (typeof res.data?.count === "number") {
+            setPendingStudentsCount(res.data.count);
+          }
+        })
+        .catch(() => {});
+    } else {
+      axios
+        .get("/api/announcements")
+        .then((res) => {
+          if (Array.isArray(res.data)) {
+            let readIds: string[] = [];
+            try {
+              const stored = localStorage.getItem("ofppt_read_announcements");
+              if (stored) readIds = JSON.parse(stored);
+            } catch (e) {}
 
-    axios
-      .get("/api/announcements")
-      .then((res) => {
-        if (Array.isArray(res.data)) {
-          let readIds: string[] = [];
-          try {
-            const stored = localStorage.getItem("ofppt_read_announcements");
-            if (stored) readIds = JSON.parse(stored);
-          } catch (e) {}
-
-          const unread = res.data.filter((item: any) => !readIds.includes(item.id)).length;
-          setAnnouncementsCount(unread);
-        }
-      })
-      .catch(() => {});
+            const unread = res.data.filter((item: any) => !readIds.includes(item.id)).length;
+            setAnnouncementsCount(unread);
+          }
+        })
+        .catch(() => {});
+    }
   };
 
   useEffect(() => {
-    fetchUnreadCount();
+    fetchCounts();
 
-    const handleUpdate = () => fetchUnreadCount();
+    const handleUpdate = () => fetchCounts();
     window.addEventListener("announcements-read-updated", handleUpdate);
     return () => window.removeEventListener("announcements-read-updated", handleUpdate);
   }, [isTeacherPage]);
@@ -95,7 +105,12 @@ export const TopNavLinks = () => {
           pathname === route.href ||
           (route.href !== "/" && pathname?.startsWith(route.href));
 
-        const badgeCount = route.href === "/announcements" ? announcementsCount : undefined;
+        const badgeCount =
+          route.href === "/announcements"
+            ? announcementsCount
+            : route.href === "/teacher/students"
+            ? pendingStudentsCount
+            : undefined;
 
         return (
           <Link
@@ -110,7 +125,7 @@ export const TopNavLinks = () => {
             <span className="whitespace-nowrap">{route.label}</span>
 
             {badgeCount !== undefined && badgeCount > 0 && (
-              <span className="inline-flex items-center justify-center h-4 min-w-4 px-1.5 text-[10px] font-extrabold text-white bg-rose-500 rounded-full shadow-xs animate-pulse ml-1.5">
+              <span className="inline-flex items-center justify-center h-4 min-w-4 px-1.5 text-[10px] font-extrabold text-white bg-amber-500 rounded-full shadow-xs animate-pulse ml-1.5">
                 {badgeCount}
               </span>
             )}
