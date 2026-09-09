@@ -69,7 +69,7 @@ export const SidebarRoutes = () => {
 
   const isTeacherPage = pathname?.includes("/teacher");
 
-  useEffect(() => {
+  const fetchCounts = () => {
     if (!isTeacherPage) {
       axios
         .get("/api/announcements")
@@ -89,6 +89,19 @@ export const SidebarRoutes = () => {
         })
         .catch(() => {});
     }
+  };
+
+  useEffect(() => {
+    fetchCounts();
+
+    const handleUpdate = () => fetchCounts();
+    window.addEventListener("pending-students-updated", handleUpdate);
+    const interval = setInterval(fetchCounts, 10000);
+
+    return () => {
+      window.removeEventListener("pending-students-updated", handleUpdate);
+      clearInterval(interval);
+    };
   }, [isTeacherPage]);
 
   const routes = isTeacherPage ? teacherRoutes : guestRoutes;

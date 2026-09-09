@@ -71,6 +71,9 @@ export const StudentFiliereModal = ({
       });
 
       toast.success("Parcours d'apprentissage configuré avec succès !");
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("pending-students-updated"));
+      }
       router.refresh();
       onClose();
     } catch (error) {

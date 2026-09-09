@@ -92,7 +92,14 @@ export const TopNavLinks = () => {
 
     const handleUpdate = () => fetchCounts();
     window.addEventListener("announcements-read-updated", handleUpdate);
-    return () => window.removeEventListener("announcements-read-updated", handleUpdate);
+    window.addEventListener("pending-students-updated", handleUpdate);
+    const interval = setInterval(fetchCounts, 10000);
+
+    return () => {
+      window.removeEventListener("announcements-read-updated", handleUpdate);
+      window.removeEventListener("pending-students-updated", handleUpdate);
+      clearInterval(interval);
+    };
   }, [isTeacherPage]);
 
   const routes = isTeacherPage ? teacherRoutes : guestRoutes;

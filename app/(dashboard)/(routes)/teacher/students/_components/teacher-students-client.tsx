@@ -91,6 +91,9 @@ export const TeacherStudentsClient = ({
       } else {
         toast.success("Demande d'approbation révoquée.");
       }
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("pending-students-updated"));
+      }
       router.refresh();
     } catch {
       setApprovalMap((prev) => ({ ...prev, [studentId]: !nextApprovedState }));
@@ -136,6 +139,9 @@ export const TeacherStudentsClient = ({
       setLoadingId(studentId);
       await axios.delete(`/api/students/${studentId}/approve`);
       toast.success("La fiche de l'étudiant a été retirée.");
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("pending-students-updated"));
+      }
       router.refresh();
     } catch {
       toast.error("Erreur lors du retrait de l'étudiant.");

@@ -20,17 +20,31 @@ export const NavbarRoutes = () => {
   const isTeacherPage = pathname?.startsWith("/teacher");
   const isPlayerPage = pathname?.includes("/chapter");
 
+  const fetchPendingCount = () => {
+    if (!isTeacherUser) return;
+    axios
+      .get("/api/students/pending-count")
+      .then((res) => {
+        if (typeof res.data?.count === "number") {
+          setPendingCount(res.data.count);
+        }
+      })
+      .catch(() => {});
+  };
+
   useEffect(() => {
-    if (isTeacherUser) {
-      axios
-        .get("/api/students/pending-count")
-        .then((res) => {
-          if (typeof res.data?.count === "number") {
-            setPendingCount(res.data.count);
-          }
-        })
-        .catch(() => {});
-    }
+    if (!isTeacherUser) return;
+
+    fetchPendingCount();
+
+    const handleUpdate = () => fetchPendingCount();
+    window.addEventListener("pending-students-updated", handleUpdate);
+    const interval = setInterval(fetchPendingCount, 10000);
+
+    return () => {
+      window.removeEventListener("pending-students-updated", handleUpdate);
+      clearInterval(interval);
+    };
   }, [isTeacherUser, pathname]);
 
   return (
