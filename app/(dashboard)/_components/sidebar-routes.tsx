@@ -99,7 +99,7 @@ export const SidebarRoutes = () => {
         const badgeCount =
           route.href === "/announcements"
             ? announcementsCount
-            : route.href === "/teacher/students"
+            : route.href === "/teacher/students" && !pathname?.startsWith("/teacher/students")
             ? pendingStudentsCount
             : undefined;
 
