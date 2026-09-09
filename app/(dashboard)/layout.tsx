@@ -4,6 +4,8 @@ import { db } from "@/lib/db";
 import { Navbar } from "./_components/navbar";
 import { Footer } from "@/components/footer";
 
+import { isTeacher } from "@/lib/teacher";
+
 export default async function DashboardLayout({
   children,
 }: {
@@ -18,6 +20,16 @@ export default async function DashboardLayout({
 
     if (isBlocked) {
       return redirect("/blocked");
+    }
+
+    if (!isTeacher(userId)) {
+      const studentProfile = await db.studentProfile.findUnique({
+        where: { userId },
+      });
+
+      if (studentProfile && !studentProfile.isApproved) {
+        return redirect("/pending-approval");
+      }
     }
   }
 

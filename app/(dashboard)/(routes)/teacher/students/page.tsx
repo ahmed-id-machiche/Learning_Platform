@@ -65,9 +65,23 @@ const StudentsPage = async () => {
   const blockedStudents = (await (db as any).blockedStudent?.findMany?.()) || [];
   const blockedUserIds = new Set(blockedStudents.map((b: any) => b.userId));
 
+  const studentProfiles = await db.studentProfile.findMany({
+    orderBy: { createdAt: "desc" },
+  }).catch(() => []);
+
+  const profileMap: Record<string, { year: string; filiere: string; isApproved: boolean }> = {};
+  studentProfiles.forEach((sp) => {
+    profileMap[sp.userId] = {
+      year: sp.year,
+      filiere: sp.filiere,
+      isApproved: sp.isApproved,
+    };
+  });
+
   // Unique student user IDs (excluding teachers)
   const studentUserIds = Array.from(
     new Set([
+      ...studentProfiles.map((sp) => sp.userId),
       ...purchases.map((p) => p.userId),
       ...userProgresses.map((up) => up.userId),
       ...submissions.map((s) => s.userId),
@@ -102,6 +116,7 @@ const StudentsPage = async () => {
       name: `Stagiaire (${studentId.substring(0, 8)})`,
       email: "",
     };
+    const profile = profileMap[studentId];
     const studentProgresses = userProgresses.filter((up) => up.userId === studentId);
     const studentSubmissions = submissions.filter((s) => s.userId === studentId);
 
@@ -143,6 +158,9 @@ const StudentsPage = async () => {
       studentId,
       studentName: studentInfo.name,
       studentEmail: studentInfo.email,
+      year: profile?.year || null,
+      filiere: profile?.filiere || null,
+      isApproved: profile ? profile.isApproved : true, // default to true if profile not set
       enrolledModules,
       completedModulesCount,
       inProgressModulesCount,

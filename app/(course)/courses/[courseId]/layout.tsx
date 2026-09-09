@@ -7,6 +7,8 @@ import { getProgress } from "@/actions/get-progress";
 import { CourseSidebar } from "./_components/course-sidebar";
 import { CourseNavbar } from "./_components/course-navbar";
 
+import { isTeacher } from "@/lib/teacher";
+
 const CourseLayout = async ({
   children,
   params,
@@ -27,6 +29,16 @@ const CourseLayout = async ({
 
   if (isBlocked) {
     return redirect("/blocked");
+  }
+
+  if (!isTeacher(userId)) {
+    const studentProfile = await db.studentProfile.findUnique({
+      where: { userId },
+    });
+
+    if (studentProfile && !studentProfile.isApproved) {
+      return redirect("/pending-approval");
+    }
   }
 
   const course = await db.course.findUnique({
